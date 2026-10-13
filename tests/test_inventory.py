@@ -15,6 +15,37 @@ TYPES = [
 ]
 
 
+@pytest.mark.parametrize(
+    "binding",
+    [
+        'import crypto from "node:crypto";',
+        'import * as crypto from "crypto";',
+        'const crypto = require("node:crypto");',
+    ],
+)
+def test_namespace_parameters_do_not_create_inventory(tmp_path, binding):
+    calls = (
+        'crypto.generateKeyPairSync("ml-kem-768", {});'
+        'crypto.generateKeyPair("rsa", {}, callback);'
+        'crypto.createECDH("prime256v1");'
+        "crypto.createDiffieHellman(2048);"
+    )
+    (tmp_path / "app.js").write_text(
+        binding
+        + "\n"
+        + f"function named(crypto) {{ {calls} }}\n"
+        + f"const anonymous = function (crypto) {{ {calls} }};\n"
+        + f"const arrow = (crypto) => {{ {calls} }};\n"
+        + 'crypto.generateKeyPairSync("ml-kem-768", {});\n'
+    )
+    report = scan(tmp_path)
+    assert report["status"] == "completed"
+    assert report["findings"] == []
+    assert [(e["algorithm"], e["line"]) for e in report["inventory"]] == [
+        ("ML-KEM-768", 5)
+    ]
+
+
 @pytest.mark.parametrize("algorithm", TYPES)
 def test_pqc_keygen_is_inventory_without_migration_warnings(tmp_path, algorithm):
     (tmp_path / "app.js").write_text(

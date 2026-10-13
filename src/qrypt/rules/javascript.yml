@@ -9,16 +9,21 @@ rules:
     pattern-either:
     - patterns:
       - &node-namespace
-        pattern-either:
-        - pattern-inside: |-
-            import * as $CRYPTO from $MODULE;
-            ...
-        - pattern-inside: |-
-            import $CRYPTO from $MODULE;
-            ...
-        - pattern-inside: |-
-            const $CRYPTO = require($MODULE);
-            ...
+        patterns:
+        - pattern-either:
+          - pattern-inside: |-
+              import * as $CRYPTO from $MODULE;
+              ...
+          - pattern-inside: |-
+              import $CRYPTO from $MODULE;
+              ...
+          - pattern-inside: |-
+              const $CRYPTO = require($MODULE);
+              ...
+        - pattern: $CRYPTO.$METHOD(...)
+        - pattern-not-inside: function $F(..., $CRYPTO, ...) { ... }
+        - pattern-not-inside: function (..., $CRYPTO, ...) { ... }
+        - pattern-not-inside: (..., $CRYPTO, ...) => ...
       - pattern-either:
         - pattern: $CRYPTO.generateKeyPairSync($ARG, ...)
         - pattern: $CRYPTO.generateKeyPair($ARG, ...)
