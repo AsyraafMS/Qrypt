@@ -1,10 +1,10 @@
 # QRYPT — PQC Security Scanner
 
-A developer-first scanner for post-quantum cryptography (PQC) migration readiness. QRYPT will identify potentially quantum-vulnerable cryptographic usage in source code and local TLS configurations, explain migration considerations, and export findings for GitHub Code Scanning.
+A developer-first scanner for post-quantum cryptography (PQC) migration readiness. QRYPT identifies supported cryptographic API usage in Python and Node.js source code and produces migration-candidate reports. Local TLS configuration analysis and GitHub Code Scanning exports are planned extensions.
 
 The project demonstrates cryptographic inventory, AppSec analysis, security automation, and DevSecOps integration. Its intended users are developers and security engineers reviewing cryptographic dependencies before migration.
 
-> **Status: planning stage.** No scanner, package, container, or dashboard exists yet. All capabilities, commands, and releases below are planned.
+> **Status: Phase 1 implemented.** The local source scanner, terminal reports, and JSON reports are available. SARIF, GitHub Actions, Docker, TLS analysis, CBOM, and the dashboard remain planned. This is an early development version, not a comprehensive cryptographic audit.
 
 ## Purpose
 
@@ -12,19 +12,19 @@ Cryptographic discovery and inventory are central to [NIST's PQC migration guida
 
 Findings are **migration candidates requiring verification**, not proof of an exploitable vulnerability. A rule match cannot determine business impact, data-retention requirements, or whether the code runs in production. Zero findings will not establish PQC readiness.
 
-## Planned Capabilities
+## Capabilities
 
-The first public release will provide:
+Available in Phase 1:
 
 - A local Python CLI backed by QRYPT-authored Semgrep Community Edition rules.
 - Python `cryptography` and PyCryptodome coverage, plus JavaScript coverage for Node.js `crypto`.
 - Detection of explicit RSA, DH, and elliptic-curve operations, distinguishing key agreement, signing, and key generation when evidence permits.
-- Terminal and versioned JSON migration reports, plus SARIF 2.1.0 for GitHub Code Scanning.
+- Terminal and versioned JSON migration reports with scan diagnostics and file counts.
 - Advisory CI behavior, with an explicit option to fail on findings.
 
-Later releases will add Nginx and OpenSSL configuration analysis, CycloneDX cryptographic inventory, and an offline HTML dashboard. Browser Web Crypto, TypeScript, and other libraries are outside the initial coverage.
+Phase 2 will add SARIF 2.1.0 and GitHub Actions for the first public release. Later releases will add Nginx and OpenSSL configuration analysis, CycloneDX cryptographic inventory, and an offline HTML dashboard. Browser Web Crypto, TypeScript, and other libraries are outside the initial coverage.
 
-## Planned Architecture
+## Architecture
 
 ```mermaid
 flowchart TD
@@ -32,18 +32,27 @@ flowchart TD
     B[Local TLS configurations: later phase] --> C
     C --> D[Normalized findings and scan diagnostics]
     D --> E[Terminal and JSON reports]
-    D --> F[SARIF: GitHub Code Scanning]
+    D --> F[SARIF: GitHub Code Scanning, planned Phase 2]
     D --> G[CycloneDX CBOM: later phase]
     D --> H[Offline HTML dashboard: later phase]
 ```
 
-Semgrep will handle syntax-aware matching; QRYPT will add cryptographic interpretation and reporting. Each finding will include a stable rule ID, relative file location, algorithm evidence, operation where identifiable, confidence, and migration-review guidance.
+Semgrep handles syntax-aware matching; QRYPT adds cryptographic interpretation and reporting. Each finding includes a stable rule ID, relative file location, algorithm evidence, operation where identifiable, confidence, and migration-review guidance. Confidence describes the matched API evidence, not exploitability or business risk.
 
-Implementation will use Python 3.12+, `argparse`, setuptools, and Semgrep CE. Source and bundled rules will live under `src/qrypt/`; tests and rule fixtures will live under `tests/`. Reports will share one finding model rather than separate detection logic.
+Implementation uses Python 3.12+, `argparse`, setuptools, and Semgrep CE 1.177.0. Source and bundled rules live under `src/qrypt/`; tests and annotated rule fixtures live under `tests/`. The `examples/` directory contains scan inputs. Terminal and JSON reports share one finding model.
 
-## Planned Usage
+## Installation and Usage
 
-These examples define the intended CLI interface; they do not work yet. Installation instructions will be added once packaging is implemented and verified.
+Requires Python 3.12+ with working `venv` and pip support, and a platform supported by Semgrep CE. On Debian/Ubuntu, install the matching Python `venv` package if environment creation reports missing `ensurepip`.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+qrypt scan examples
+```
+
+The example directory produces ten migration candidates across two files. Scanning does not import or execute them, so their application dependencies are not required. `python -m qrypt` is also supported.
 
 ```bash
 # Review supported source files in the current repository
@@ -52,14 +61,15 @@ qrypt scan .
 # Write a machine-readable migration report
 qrypt scan ./examples --format json --output report.json
 
-# Export findings for GitHub Code Scanning
-qrypt scan . --format sarif --output qrypt.sarif
-
 # Explicitly enforce findings in CI
 qrypt scan . --fail-on-findings
 ```
 
-Terminal output will be the default. JSON and SARIF will go to standard output unless `--output` is supplied; diagnostics will go to standard error. Later phases will add `cbom` and `html` formats.
+Terminal output is the default; `--format json` produces JSON with `schema_version: 1`, completion status, file counts, findings, and errors. Reports go to standard output unless `--output` is supplied; diagnostics go to standard error.
+
+Output files must use `.json` for JSON or `.txt` for terminal reports. Their parent directory must exist, and symlink destinations are rejected. Python, JavaScript, and Markdown files cannot be used as report destinations. An existing `.json` or `.txt` destination is replaced atomically. Later phases will add `sarif`, `cbom`, and `html` formats.
+
+Scans support `.py`, `.js`, `.mjs`, and `.cjs`, honor Git/Semgrep ignore rules, and exclude `.git`, virtual environments, `node_modules`, `vendor`, `build`, and `dist`. A target with no scannable files returns exit code `2`. Scans have a 120-second total time limit.
 
 | Exit code | Meaning |
 | --- | --- |
@@ -73,16 +83,42 @@ Each phase must meet its completion criteria before the next begins. Release lab
 
 | Phase | Deliverables | Completion criteria |
 | --- | --- | --- |
-| **0 — Design and documentation** | Define scope, architecture, planned interfaces, limitations, and this roadmap. | Review documentation and links; distinguish planned features from working features. |
-| **1 — Source scanner** | Package the CLI; add Python and Node.js rules, terminal output, and JSON reports. | Installed CLI scans example projects; every rule has positive and negative fixtures; unrelated strings and comments do not trigger findings. |
+| **0 — Design and documentation · complete** | Define scope, architecture, planned interfaces, limitations, and this roadmap. | Review documentation and links; distinguish planned features from working features. |
+| **1 — Source scanner · complete** | Package the CLI; add Python and Node.js rules, terminal output, and JSON reports. | Installed CLI scans example projects; every rule has positive and negative fixtures; unrelated strings and comments do not trigger findings. |
 | **2 — SARIF and CI · v0.1** | Add SARIF, GitHub Actions, documented rule coverage, example reports, and a reproducible Docker image. | Validate SARIF; demonstrate alerts in a public repository; verify package installation, container execution, and exit codes. **First public release.** |
 | **3 — TLS configurations · v0.2** | Scan explicit Nginx and OpenSSL declarations for groups, signature algorithms, and relevant cipher settings. | Test declarations, comments, exclusions, and unresolved settings; distinguish configured intent from negotiated behavior. |
 | **4 — Cryptographic inventory · v0.3** | Export CycloneDX 1.6 CBOM for observed algorithms and supported occurrence evidence; recognize supported explicit ML-KEM/ML-DSA identifiers as inventory entries. | Validate against the CycloneDX schema; retain occurrence locations; do not invent dependency relationships or treat PQC identifiers as migration warnings. |
 | **5 — Dashboard and portfolio · v0.4** | Generate a self-contained HTML report with algorithm, rule, and file filters; add a demo GIF and measured scan results. | Report opens without a server or external assets, safely escapes content, and matches JSON findings; publish the demo, threat model, and evaluation methodology. |
 
-## Planned Testing and Evaluation
+## Detection Coverage
 
-Use pytest for CLI and report integration, Semgrep rule fixtures for detection, and Ruff for Python checks. Validate exported SARIF and CBOM against their respective schemas.
+Ten original rules cover these explicit API calls:
+
+| Library | Supported calls |
+| --- | --- |
+| Python `cryptography` | `rsa.generate_private_key`, `dh.generate_parameters`, `ec.generate_private_key`, `ec.ECDH`, `ec.ECDSA` |
+| PyCryptodome, including the `Cryptodome` namespace | `RSA.generate`, `ECC.generate` |
+| Node.js `crypto` / `node:crypto` | `generateKeyPair` / `generateKeyPairSync` with `rsa`, `rsa-pss`, `ec`, or `dh`; `createECDH`; `createDiffieHellman`; `getDiffieHellman`; `createDiffieHellmanGroup` |
+
+Fixtures exercise Python aliases and Node.js CommonJS `const` bindings and ES-module namespace/default/named imports, including aliases. Ordinary parameter and local-variable shadowing, unrelated functions, comments, and strings have negative controls.
+
+Generic EC key generation is reported as **EC**, not inferred to be ECDSA or ECDH. Imports alone, key loading, arbitrary signing/encryption calls, indirect wrappers, and other cryptographic libraries are not inventoried. Python syntax is checked using the scanner's interpreter; JavaScript parsing relies on Semgrep diagnostics and may recover fragments without reporting every syntax error.
+
+## Testing and Evaluation
+
+Install development tools and run the checks:
+
+```bash
+python -m pip install -e ".[dev]"
+python -m pytest
+ruff check .
+ruff format --check .
+python -m build
+```
+
+Build artifacts are written to the ignored `dist/` directory. Tests use the Semgrep executable installed alongside the active Python interpreter. Fixtures and scan examples are deliberately excluded from Ruff formatting so their annotated locations and input shapes remain stable.
+
+The suite uses pytest for CLI/report integration and real Semgrep scans of annotated rule fixtures. It also covers incomplete Python scans, exclusions, report privacy, unsafe output paths, atomic-write failures, timeouts, missing engines, and exit codes. SARIF and CBOM schema validation will arrive with their respective phases.
 
 Test import aliases, multiline calls, unrelated identifiers, symmetric/hash controls, malformed files, excluded directories, missing scanner dependencies, output failures, and each exit code. TLS tests must cover negated cipher entries and unresolved variables or defaults.
 

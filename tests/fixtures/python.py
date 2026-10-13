@@ -36,3 +36,9 @@ symmetric = algorithms.AES(b"this-is-a-test-key-only-32-bytes!")
 def shadowed(rsa):
     # ok: qrypt.python.rsa-keygen
     return rsa.generate_private_key()
+
+# ruleid: qrypt.python.rsa-keygen
+multiline_key = make_rsa(
+    public_exponent=65537,
+    key_size=2048,
+)

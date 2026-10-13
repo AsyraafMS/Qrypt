@@ -74,3 +74,9 @@ function shadowedLocal() {
     // ok: qrypt.javascript.rsa-keygen
     generateKeyPair("rsa", {}, callback);
 }
+
+// ruleid: qrypt.javascript.rsa-keygen
+makeKey(
+    "rsa",
+    {modulusLength: 2048},
+);
