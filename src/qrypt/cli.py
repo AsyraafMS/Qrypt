@@ -8,6 +8,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from qrypt.banner import BANNER
 from qrypt.sarif import sarif_report
 from qrypt.scanner import scan
 
@@ -66,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     commands = parser.add_subparsers(dest="command", required=True)
     scan_parser = commands.add_parser(
-        "scan", help="Scan supported Python/Node.js files."
+        "scan", help="Scan supported Python/Node.js and local TLS config files."
     )
     scan_parser.add_argument("path", type=Path)
     scan_parser.add_argument(
@@ -87,6 +88,13 @@ def main(argv: list[str] | None = None) -> int:
             content = json.dumps(report, indent=2) + "\n"
         else:
             content = _text_report(report)
+        if (
+            arguments.format == "text"
+            and not arguments.output
+            and report["status"] == "completed"
+            and sys.stdout.isatty()
+        ):
+            content = BANNER + "\n\n" + content
         if arguments.output:
             _write_report(arguments.output, content)
         else:
