@@ -90,3 +90,34 @@ def test_sarif_cli_preserves_exit_codes_and_privacy(
     Draft7Validator(SCHEMA).validate(json.loads(content))
     assert str(tmp_path) not in content
     assert "snippet" not in content
+
+
+@pytest.mark.parametrize(
+    "destination", ["source.py", "report.json", "linked.sarif", "missing/report.sarif"]
+)
+def test_sarif_rejects_unsafe_output_before_scanning(
+    tmp_path, monkeypatch, capsys, destination
+):
+    source = tmp_path / "source.py"
+    source.write_text("preserve = True\n")
+    (tmp_path / "linked.sarif").symlink_to(source)
+
+    def unexpected_scan(target):
+        pytest.fail("unsafe output must be rejected before scanning")
+
+    monkeypatch.setattr("qrypt.cli.scan", unexpected_scan)
+    assert (
+        main(
+            [
+                "scan",
+                str(tmp_path),
+                "--format",
+                "sarif",
+                "--output",
+                str(tmp_path / destination),
+            ]
+        )
+        == 2
+    )
+    assert source.read_text() == "preserve = True\n"
+    assert capsys.readouterr().err
