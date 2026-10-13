@@ -32,9 +32,9 @@
 
 **Produces:** Installed `qrypt` package and tested rule metadata (`algorithm`, `operation`, `confidence`, `guidance`) consumed by Task 2.
 
-- [ ] Write a real-engine test for annotated positive/negative rule fixtures; run it RED without rules.
-- [ ] Add original rules for Python RSA/DH/EC key generation, explicit ECDH/ECDSA operations, PyCryptodome RSA/ECC generation, and Node.js RSA/EC/DH key generation and ECDH/DH constructors. Do not infer ECDSA from generic EC key generation.
-- [ ] Run the rule suite and Ruff GREEN; commit the independently tested rules/package.
+- [x] Write a real-engine test for annotated positive/negative rule fixtures; run it RED without rules.
+- [x] Add original rules for Python RSA/DH/EC key generation, explicit ECDH/ECDSA operations, PyCryptodome RSA/ECC generation, and Node.js RSA/EC/DH key generation and ECDH/DH constructors. Do not infer ECDSA from generic EC key generation.
+- [x] Run the rule suite and Ruff GREEN; commit the independently tested rules/package.
 
 ## Task 2: Implement scan/report CLI
 
@@ -44,19 +44,19 @@
 
 **Produces:** `scan(target: Path) -> dict`; `main(argv: list[str] | None = None) -> int`; `qrypt scan PATH --format text|json --output PATH --fail-on-findings`.
 
-- [ ] Write end-to-end tests for finding/clean scans, relative locations, privacy, output files, advisory/enforcing exits, malformed source, unsupported inputs, exclusions, missing engine, and unsafe output destinations; observe RED.
-- [ ] Implement the minimal Semgrep subprocess runner and versioned JSON normalization. Use `schema_version: 1`, completion status, scanned-file count, skipped-file count, findings, and errors. Emit diagnostics to stderr.
-- [ ] Implement text/JSON rendering and safe atomic output replacement; reject existing source files and other unsafe destinations before scanning.
-- [ ] Run the full suite and Ruff GREEN; commit the working CLI.
+- [x] Write end-to-end tests for finding/clean scans, relative locations, privacy, output files, advisory/enforcing exits, malformed source, unsupported inputs, exclusions, missing engine, and unsafe output destinations; observe RED.
+- [x] Implement the minimal Semgrep subprocess runner and versioned JSON normalization. Use `schema_version: 1`, completion status, scanned-file count, skipped-file count, findings, and errors. Emit diagnostics to stderr.
+- [x] Implement text/JSON rendering and safe atomic output replacement; reject existing source files and other unsafe destinations before scanning.
+- [x] Run the full suite and Ruff GREEN; commit the working CLI.
 
 ## Task 3: Document and verify installed use
 
 **Files:** `README.md`, `examples/crypto_usage.py`, `examples/crypto_usage.js`.
 
-- [ ] Add small review examples and actual install, usage, rule-coverage, and test commands. Mark Phase 1 complete while preserving later phases as planned.
-- [ ] Build sdist/wheel; install the wheel in a fresh environment; scan examples from outside the repository and compare counts with development scans.
-- [ ] Run all tests, Ruff, and whitespace checks; commit documentation/examples.
-- [ ] Obtain one independent whole-change review; reproduce and fix any important findings with tests, then rerun the suite.
+- [x] Add small review examples and actual install, usage, rule-coverage, and test commands. Mark Phase 1 complete while preserving later phases as planned.
+- [x] Build sdist/wheel; install the wheel in a fresh environment; scan examples from outside the repository and compare counts with development scans.
+- [x] Run all tests, Ruff, and whitespace checks; commit documentation/examples.
+- [x] Obtain one independent whole-change review; reproduce and fix any important findings with tests, then rerun the suite.
 
 ## Execution Notes
 
