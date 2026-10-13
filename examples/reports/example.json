@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "scanned_files": 7,
+  "skipped_files": 21,
+  "coverage": "Explicit supported Python and Node.js API calls only; zero findings does not establish PQC readiness.",
+  "findings": [
+    {
+      "rule_id": "qrypt.javascript.rsa-keygen",
+      "path": "examples/crypto_usage.js",
+      "line": 4,
+      "column": 16,
+      "algorithm": "RSA",
+      "operation": "key-generation",
+      "confidence": "high",
+      "guidance": "Review whether this key supports encryption or signatures, its lifetime, and compatible PQC migration options; do not replace it automatically."
+    },
+    {
+      "rule_id": "qrypt.javascript.ec-keygen",
+      "path": "examples/crypto_usage.js",
+      "line": 5,
+      "column": 15,
+      "algorithm": "EC",
+      "operation": "key-generation",
+      "confidence": "high",
+      "guidance": "Determine whether the key is used for signatures or key agreement before selecting a compatible PQC migration path."
+    },
+    {
+      "rule_id": "qrypt.javascript.dh-keygen",
+      "path": "examples/crypto_usage.js",
+      "line": 6,
+      "column": 15,
+      "algorithm": "DH",
+      "operation": "key-generation",
+      "confidence": "high",
+      "guidance": "Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
+    },
+    {
+      "rule_id": "qrypt.javascript.ecdh",
+      "path": "examples/crypto_usage.js",
+      "line": 7,
+      "column": 14,
+      "algorithm": "ECDH",
+      "operation": "key-agreement-configuration",
+      "confidence": "high",
+      "guidance": "Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
+    },
+    {
+      "rule_id": "qrypt.javascript.dh",
+      "path": "examples/crypto_usage.js",
+      "line": 8,
+      "column": 12,
+      "algorithm": "DH",
+      "operation": "key-agreement-configuration",
+      "confidence": "high",
+      "guidance": "Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
+    },
+    {
+      "rule_id": "qrypt.python.rsa-keygen",
+      "path": "examples/crypto_usage.py",
+      "line": 6,
+      "column": 11,
+      "algorithm": "RSA",
+      "operation": "key-generation",
+      "confidence": "high",
+      "guidance": "Review whether this key supports encryption or signatures, its lifetime, and compatible PQC migration options; do not replace it automatically."
+    },
+    {
+      "rule_id": "qrypt.python.dh-parameters",
+      "path": "examples/crypto_usage.py",
+      "line": 7,
+      "column": 17,
+      "algorithm": "DH",
+      "operation": "parameter-generation",
+      "confidence": "high",
+      "guidance": "Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
+    },
+    {
+      "rule_id": "qrypt.python.ec-keygen",
+      "path": "examples/crypto_usage.py",
+      "line": 8,
+      "column": 10,
+      "algorithm": "EC",
+      "operation": "key-generation",
+      "confidence": "high",
+      "guidance": "Determine whether the key is used for signatures or key agreement before selecting a compatible PQC migration path."
+    },
+    {
+      "rule_id": "qrypt.python.ecdh",
+      "path": "examples/crypto_usage.py",
+      "line": 9,
+      "column": 22,
+      "algorithm": "ECDH",
+      "operation": "key-agreement-configuration",
+      "confidence": "high",
+      "guidance": "Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
+    },
+    {
+      "rule_id": "qrypt.python.ecdsa",
+      "path": "examples/crypto_usage.py",
+      "line": 10,
+      "column": 23,
+      "algorithm": "ECDSA",
+      "operation": "signature-configuration",
+      "confidence": "high",
+      "guidance": "Review signing and verification dependencies and long-lived signatures; evaluate compatible PQC signature schemes."
+    }
+  ],
+  "errors": []
+}
