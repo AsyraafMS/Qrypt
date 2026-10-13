@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from qrypt.cli import main
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = (
     "from cryptography.hazmat.primitives.asymmetric import rsa\n"
@@ -157,19 +159,25 @@ def test_unsafe_output_destinations_preserve_source(project, destination):
     assert readme.read_text() == "preserve this document"
 
 
-def test_missing_engine_returns_actionable_error(project):
-    result = run_cli("scan", project, env={"PATH": str(project)})
-    assert result.returncode == 2
-    assert "semgrep" in result.stderr.lower()
+def test_missing_engine_returns_actionable_error(project, monkeypatch, capsys):
+    monkeypatch.setattr("qrypt.scanner.sys.executable", str(project / "python"))
+    monkeypatch.setenv("PATH", str(project))
+    assert main(["scan", str(project)]) == 2
+    assert "semgrep" in capsys.readouterr().err.lower()
 
 
-def test_invalid_engine_response_does_not_look_like_clean_scan(project):
+def test_invalid_engine_response_does_not_look_like_clean_scan(
+    project,
+    monkeypatch,
+    capsys,
+):
     engine = project / "semgrep"
     engine.write_text(f"#!{sys.executable}\nprint('{{}}')\n")
     engine.chmod(0o755)
-    result = run_cli("scan", project, env={"PATH": str(project)})
-    assert result.returncode == 2
-    assert result.stderr
+    monkeypatch.setattr("qrypt.scanner.sys.executable", str(project / "python"))
+    monkeypatch.setenv("PATH", str(project))
+    assert main(["scan", str(project)]) == 2
+    assert "invalid scan response" in capsys.readouterr().err
 
 
 def test_only_phase_one_output_formats_are_accepted(project):
@@ -191,3 +199,9 @@ def test_analysis_limit_skip_makes_report_incomplete(tmp_path):
         for error in report["errors"]
     )
     assert str(tmp_path) not in result.stdout
+
+
+def test_installed_engine_is_used_without_venv_on_path(project):
+    result = run_cli("scan", project, "--format", "json", env={"PATH": "/usr/bin:/bin"})
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["findings"][0]["algorithm"] == "RSA"

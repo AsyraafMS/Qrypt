@@ -69,7 +69,7 @@ Terminal output is the default; `--format json` produces JSON with `schema_versi
 
 Output files must use `.json` for JSON or `.txt` for terminal reports. Their parent directory must exist, and symlink destinations are rejected. Python, JavaScript, and Markdown files cannot be used as report destinations. An existing `.json` or `.txt` destination is replaced atomically. Later phases will add `sarif`, `cbom`, and `html` formats.
 
-Scans support `.py`, `.js`, `.mjs`, and `.cjs`, honor Git/Semgrep ignore rules, and exclude `.git`, virtual environments, `node_modules`, `vendor`, `build`, and `dist`. Analysis failures and source files skipped because of limits (including Semgrep's default size limit) produce relative-path diagnostics and exit code `2`; intentional ignore/exclusion decisions do not. A target with no scannable files also returns `2`. Scans have a 120-second total time limit.
+Scans support `.py`, `.js`, `.mjs`, and `.cjs`, honor Git/Semgrep ignore rules, and exclude `.git`, virtual environments, `node_modules`, `vendor`, `build`, and `dist`. Analysis failures and source files skipped because of limits (including Semgrep's default size limit) produce relative-path diagnostics and exit code `2`; intentional ignore/exclusion decisions do not. A target with no scannable files also returns `2`. Scans have a 120-second total time limit. QRYPT prefers the Semgrep executable installed alongside its interpreter, with a PATH fallback.
 
 | Exit code | Meaning |
 | --- | --- |

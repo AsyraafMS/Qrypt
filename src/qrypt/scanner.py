@@ -2,8 +2,10 @@
 
 import ast
 import json
+import os
 import shutil
 import subprocess
+import sys
 import tokenize
 from pathlib import Path
 
@@ -41,7 +43,12 @@ def scan(target: Path) -> dict:
             "Target must be a directory or a .py, .js, .mjs, or .cjs file."
         )
     root = target if target.is_dir() else target.parent
-    engine = shutil.which("semgrep")
+    installed_engine = Path(sys.executable).with_name(
+        "semgrep.exe" if os.name == "nt" else "semgrep"
+    )
+    engine = (
+        str(installed_engine) if installed_engine.is_file() else shutil.which("semgrep")
+    )
     if not engine:
         raise FileNotFoundError(
             "Semgrep is not installed or not on PATH; reinstall QRYPT."
