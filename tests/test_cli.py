@@ -176,3 +176,18 @@ def test_only_phase_one_output_formats_are_accepted(project):
     result = run_cli("scan", project, "--format", "sarif")
     assert result.returncode == 2
     assert "invalid choice" in result.stderr
+
+
+def test_analysis_limit_skip_makes_report_incomplete(tmp_path):
+    (tmp_path / "small.py").write_text("value = 1\n")
+    (tmp_path / "large.py").write_text("# padding\n" * 150000 + SOURCE)
+    result = run_cli("scan", tmp_path, "--format", "json")
+    assert result.returncode == 2, result.stderr
+    report = json.loads(result.stdout)
+    assert report["status"] == "incomplete"
+    assert report["scanned_files"] == 1
+    assert any(
+        error.get("path") == "large.py" and error.get("reason") == "exceeded_size_limit"
+        for error in report["errors"]
+    )
+    assert str(tmp_path) not in result.stdout

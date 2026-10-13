@@ -17,6 +17,17 @@ EXCLUDED_DIRECTORIES = (
     "build",
     "dist",
 )
+IGNORE_REASONS = {
+    "always_skipped",
+    "semgrepignore_patterns_match",
+    "cli_include_flags_do_not_match",
+    "cli_exclude_flags_match",
+    "excluded_by_config",
+    "wrong_language",
+    "irrelevant_rule",
+    "Gitignore_patterns_match",
+    "Dotfile",
+}
 
 
 def _relative_path(value: str, root: Path) -> str:
@@ -103,6 +114,18 @@ def scan(target: Path) -> dict:
             errors.append({"type": "EngineError", "exit_code": result.returncode})
         if payload.get("skipped_rules"):
             errors.append({"type": "SkippedRules"})
+        for item in paths.get("skipped", []):
+            if (
+                Path(item["path"]).suffix in EXTENSIONS
+                and item.get("reason") not in IGNORE_REASONS
+            ):
+                errors.append(
+                    {
+                        "type": "SkippedSource",
+                        "path": _relative_path(item["path"], root),
+                        "reason": item.get("reason", "unknown"),
+                    }
+                )
         for path in paths["scanned"]:
             relative = _relative_path(path, root)
             if Path(relative).suffix == ".py":

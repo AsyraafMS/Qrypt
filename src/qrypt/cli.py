@@ -91,7 +91,9 @@ def main(argv: list[str] | None = None) -> int:
             print("QRYPT scan incomplete:", file=sys.stderr)
             for error in report["errors"]:
                 print(
-                    f"  {error['type']}: {error.get('path', 'scan')}", file=sys.stderr
+                    f"  {error.get('reason', error['type'])}: "
+                    f"{error.get('path', 'scan')}",
+                    file=sys.stderr,
                 )
             return 2
         return int(arguments.fail_on_findings and bool(report["findings"]))
