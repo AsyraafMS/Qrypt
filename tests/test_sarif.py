@@ -45,7 +45,7 @@ def test_sarif_schema_and_completion(status):
     run = result["runs"][0]
     assert result["version"] == "2.1.0"
     assert run["tool"]["driver"]["name"] == "QRYPT"
-    assert len(run["tool"]["driver"]["rules"]) == 10
+    assert len(run["tool"]["driver"]["rules"]) == 14
     assert run["invocations"][0]["executionSuccessful"] == (status != "incomplete")
     assert run["properties"]["coverage"] == report["coverage"]
     assert len(run["results"]) == len(report["findings"])

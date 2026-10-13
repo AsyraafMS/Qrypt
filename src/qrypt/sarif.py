@@ -6,20 +6,26 @@ from urllib.parse import quote
 
 from ruamel.yaml import YAML
 
+from qrypt.tls import TLS_RULES
+
 
 def sarif_report(report: dict) -> dict:
     rules = []
+    descriptors = list(TLS_RULES)
     for path in sorted((Path(__file__).parent / "rules").glob("*.yml")):
         for rule in YAML(typ="safe").load(path.read_text(encoding="utf-8"))["rules"]:
-            rules.append(
-                {
-                    "id": rule["id"],
-                    "shortDescription": {"text": rule["message"]},
-                    "help": {"text": rule["metadata"]["guidance"]},
-                    "defaultConfiguration": {"level": "warning"},
-                    "properties": {"tags": ["pqc", "cryptographic-inventory"]},
-                }
-            )
+            if not rule["metadata"].get("internal"):
+                descriptors.append(rule)
+    for rule in descriptors:
+        rules.append(
+            {
+                "id": rule["id"],
+                "shortDescription": {"text": rule["message"]},
+                "help": {"text": rule["metadata"]["guidance"]},
+                "defaultConfiguration": {"level": "warning"},
+                "properties": {"tags": ["pqc", "cryptographic-inventory"]},
+            }
+        )
     indices = {rule["id"]: index for index, rule in enumerate(rules)}
     results = []
     for finding in report["findings"]:

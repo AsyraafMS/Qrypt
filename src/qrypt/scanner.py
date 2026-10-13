@@ -9,7 +9,9 @@ import sys
 import tokenize
 from pathlib import Path
 
-EXTENSIONS = (".py", ".js", ".mjs", ".cjs")
+from qrypt.tls import scan_config
+
+EXTENSIONS = (".py", ".js", ".mjs", ".cjs", ".conf", ".cnf")
 EXCLUDED_DIRECTORIES = (
     ".git",
     ".venv",
@@ -40,7 +42,7 @@ def scan(target: Path) -> dict:
     target = target.resolve(strict=True)
     if not target.is_dir() and not (target.is_file() and target.suffix in EXTENSIONS):
         raise ValueError(
-            "Target must be a directory or a .py, .js, .mjs, or .cjs file."
+            "Target must be a directory or a .py, .js, .mjs, .cjs, .conf, or .cnf file."
         )
     root = target if target.is_dir() else target.parent
     installed_engine = Path(sys.executable).with_name(
@@ -93,6 +95,8 @@ def scan(target: Path) -> dict:
         findings = []
         for item in payload["results"]:
             metadata = item["extra"]["metadata"]
+            if metadata.get("internal"):
+                continue
             findings.append(
                 {
                     "rule_id": item["check_id"],
@@ -135,6 +139,10 @@ def scan(target: Path) -> dict:
                 )
         for path in paths["scanned"]:
             relative = _relative_path(path, root)
+            if Path(relative).suffix in (".conf", ".cnf"):
+                tls_findings, tls_errors = scan_config(root / relative, relative)
+                findings.extend(tls_findings)
+                errors.extend(tls_errors)
             if Path(relative).suffix == ".py":
                 try:
                     with tokenize.open(root / relative) as source:
@@ -156,7 +164,9 @@ def scan(target: Path) -> dict:
             "status": "incomplete" if errors else "completed",
             "scanned_files": len(paths["scanned"]),
             "skipped_files": len(paths.get("skipped", [])),
-            "coverage": "Explicit supported Python and Node.js API calls only; "
+            "coverage": "Explicit supported Python/Node.js APIs "
+            "and literal TLS settings only; "
+            "TLS evidence does not establish effective or negotiated configuration; "
             "zero findings does not establish PQC readiness.",
             "findings": sorted(
                 findings,

@@ -1,0 +1,10 @@
+rules:
+  - id: qrypt.internal.tls-input
+    languages: [generic]
+    severity: INFO
+    message: Internal TLS input discovery; not a migration finding.
+    pattern-regex: '(?s)\A.'
+    paths:
+      include: ['*.conf', '*.cnf']
+    metadata:
+      internal: true
