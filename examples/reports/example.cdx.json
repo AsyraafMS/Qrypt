@@ -1,0 +1,999 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "QRYPT",
+          "version": "0.3.0"
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "qrypt:scan-status",
+        "value": "completed"
+      },
+      {
+        "name": "qrypt:coverage",
+        "value": "Explicit supported Python/Node.js APIs and literal TLS settings only; TLS evidence does not establish effective or negotiated configuration; zero findings does not establish PQC readiness. Observed PQC identifiers also do not establish system readiness."
+      },
+      {
+        "name": "qrypt:scanned-files",
+        "value": "13"
+      },
+      {
+        "name": "qrypt:skipped-files",
+        "value": "35"
+      },
+      {
+        "name": "qrypt:scan-errors",
+        "value": "[]"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:c0dc93671f131d7882793d15a15db73aefefefafd4091a59c9c5838d088c8371",
+      "name": "DH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:1d04b9fb095f18f1f10463820df8352d37aa1930e6cc8fd94f648a6fb3afc393",
+            "location": "examples/openssl.cnf",
+            "line": 3
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-group"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.groups\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:535aa97f87d8e4ee2ad97baa2e6b5e33858f22f51060ec254456aee739f8b708",
+      "name": "DH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:ec9fb220be0b12debbbc3d5a9f326242e0657b850af4d67b041f32994d1f0e6c",
+            "location": "examples/nginx.conf",
+            "line": 5
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-key-agreement"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.ciphers\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:2a922eef2c3846513f56342b88d4b6a70abed06ede50d921e2373ba3ee55404a",
+      "name": "DH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:a2435b28501661e89e194b670d15320f93de1c9306ee07673f8cfed55522283f",
+            "location": "examples/nginx.conf",
+            "line": 6
+          },
+          {
+            "bom-ref": "qrypt:occurrence:c46690ccd30e3e4bd12d8e61f5a6b8cf1c05a2b1fd335365bc205f06853dca73",
+            "location": "examples/openssl.cnf",
+            "line": 7
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-parameter-reference"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.dhparam\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:20481c7f1fe83ba07510e13ac2b8c97db10a635e643d3a098dec030239eabb35",
+      "name": "DH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:1cfc9becfd78313252551e651ef4de5a5693cbd33ccebe86f06a33a7de34c071",
+            "location": "examples/crypto_usage.js",
+            "line": 8
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-agreement-configuration"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.dh\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:71fb2b8f416e1fe9380e8cd2be8c016f39532b8000cef096015631ead789c95c",
+      "name": "DH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:b4853ec5831d153f26e03ad4c43de18f91a0322f41ba9ffe0eb56cc921a6fe44",
+            "location": "examples/crypto_usage.js",
+            "line": 6
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.dh-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:74aa4a81d2052da5bc6a7b3c6d37ea796d40a325eb7fa1eb8e097e50bdacc780",
+      "name": "DH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:71f31e08de59a54fb297cc34b52d3d475aa01e1d23ae87b104ff88ea8b761b1b",
+            "location": "examples/crypto_usage.py",
+            "line": 7
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "parameter-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.python.dh-parameters\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:0df0ec5c18980567d2494800965c037678c8b9e76ab1bea4b8a10ca1dde1ad71",
+      "name": "EC",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:2159bf9c12eeeecae3ecd36cdf5a810763e5ddb118c7de016e7ed5905d2e728b",
+            "location": "examples/nginx.conf",
+            "line": 3
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-group"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.groups\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:5ef95c7c5aa2c896da62e5665ca792a0b28488a58b9790166ef759291671c418",
+      "name": "EC",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:60ce3d89144202cc962448d7146918547272496008ce2b677d31bfeed9dbcaa4",
+            "location": "examples/crypto_usage.js",
+            "line": 5
+          },
+          {
+            "bom-ref": "qrypt:occurrence:787d870721e761b668c9fab770435835c3efb7d7114f7d8f5e1891ff0e3b06f7",
+            "location": "examples/crypto_usage.py",
+            "line": 8
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ec-keygen\", \"qrypt.python.ec-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:e0fad331cc5ae8a96884ebc9fd1744ff12dbcffdf9babc9caab9a7c84cec0688",
+      "name": "ECDH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:0e373e7e09529bdeb70fc4f29e7a2d9abbc88a27e639112d2b168f0e9294f74f",
+            "location": "examples/nginx.conf",
+            "line": 3
+          },
+          {
+            "bom-ref": "qrypt:occurrence:5d3cb76df3a6c42950f212a763b2a38eaba4d1491be242b0af0b2854a01316f0",
+            "location": "examples/openssl.cnf",
+            "line": 3
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-group"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.groups\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:c0fca73a9c784689a33e36365a6d7ea6d8b4b42f8f3ab87174ee7b716b95106d",
+      "name": "ECDH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:82c1af32f35e849ba4f4f6543dc781bf059c9c39f93f44727d7be98ecfed0f91",
+            "location": "examples/nginx.conf",
+            "line": 5
+          },
+          {
+            "bom-ref": "qrypt:occurrence:eba84341d95e2ae7ea6f23f71e82144459a727f96730e19a2df30c6fab7a2b75",
+            "location": "examples/openssl.cnf",
+            "line": 5
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-key-agreement"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.ciphers\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:20486711d3c098363f22c0b1d3a7fc3e12e92ed8f7b52bf2c57852baf43f659f",
+      "name": "ECDH",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:2943f890738e6dbb1c95bfd2f0f9ec4d3c049e33087237f9b668d92414cb30c6",
+            "location": "examples/crypto_usage.js",
+            "line": 7
+          },
+          {
+            "bom-ref": "qrypt:occurrence:d42d1e3920bb63ebbe087ba66f44c3fdd2f17d1f0ca3d677f68a566998c3bfb7",
+            "location": "examples/crypto_usage.py",
+            "line": 9
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-agreement-configuration"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ecdh\", \"qrypt.python.ecdh\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:3505b6b4155d64da7a9a11cf51a9ba41af741246d3847ab671006061d2e7c479",
+      "name": "ECDSA",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:20f63c2fad9f50bb593a2d6bb7620f1be2230ce7ddbcfa718b0da3dfc65048e3",
+            "location": "examples/openssl.cnf",
+            "line": 5
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-authentication"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.ciphers\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:eb0b1e366f090e6360293ecdf7caa8337124588e9402a0e2a4a1cf580f6bade6",
+      "name": "ECDSA",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:06c026478cfb9be1687201b2209e754efd0c3b877722afcc5349be5e5a83cd30",
+            "location": "examples/openssl.cnf",
+            "line": 4
+          },
+          {
+            "bom-ref": "qrypt:occurrence:dbbd4a9b2145efa257fa3926e5462bb511c41b448b77f837f4b9565fe1f78047",
+            "location": "examples/nginx.conf",
+            "line": 4
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-signature"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.signatures\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:57dc89c6a750c9174e9068db491ae5759a814991f61213329a5e1b4629b12cac",
+      "name": "ECDSA",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:7ea394a15e7df0051736d1893ff1d09d40fc5bdedf9f1361da032593c7b5069a",
+            "location": "examples/crypto_usage.py",
+            "line": 10
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "signature-configuration"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.python.ecdsa\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:690984d5d413dcc69a068e81310501c5253315363f4d24a80a092f5ffad0bc11",
+      "name": "EdDSA",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:d2f3b2d961887294f36fd22458a0052b171dc15a734291022899a4a74a1b264b",
+            "location": "examples/openssl.cnf",
+            "line": 4
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-signature"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.signatures\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:b04a96bfa6a4f53c762c54846f6928d9d00d5add4b32dd6af8b7e5d027e29507",
+      "name": "ML-DSA-44",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "44"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:b9c53f122a8302ae8915bca0dd84b86a256b14147f2c95b455d90c7c9b6800da",
+            "location": "examples/pqc_usage.js",
+            "line": 8
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "false"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ml-dsa-44-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:face37183d2d7cdce7d7d1f060b7ea3b4f448ccf61b32feb0598323ad711d72b",
+      "name": "ML-DSA-65",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "65"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:98aaf7d8728e351c40a7dd2977a9df82308a69a0e73fd81a73461d9e37b64bd9",
+            "location": "examples/pqc_usage.js",
+            "line": 9
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "false"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ml-dsa-65-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:728b881803140564db7bde8c1cf735ee0a69c89e47239d2c190c4ac5a7e5c1f3",
+      "name": "ML-DSA-87",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "87"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:874ddec560781a1f9565b037da4ab5ee35b3d22a60d3aeb3909878a10927ce82",
+            "location": "examples/pqc_usage.js",
+            "line": 10
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "false"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ml-dsa-87-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:85d61ffff81b0faed7d8535a3b830c154a040fb4c024199dd4b31cfdd95441b4",
+      "name": "ML-KEM-1024",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kem",
+          "parameterSetIdentifier": "1024"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:319337cdd9a53c4b70b5268c27f747431402d020dd2e7869ca72b5f13a807c76",
+            "location": "examples/pqc_usage.js",
+            "line": 7
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "false"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ml-kem-1024-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:1c27e1f360d796fb3bd105fbfe3b2283a6643eba98cd39ea292e508b28758f4c",
+      "name": "ML-KEM-512",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kem",
+          "parameterSetIdentifier": "512"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:ba0e78698bc3d5abeaaf9192a77cde3498ecfc4cd43a1a6b3508a715659f9380",
+            "location": "examples/pqc_usage.js",
+            "line": 5
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "false"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ml-kem-512-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:772dcdddbaff8aa0c2dab016ab7a8d296197aad5bd9f4fd171113b6551588e12",
+      "name": "ML-KEM-768",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kem",
+          "parameterSetIdentifier": "768"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:33a36c1b6b024edededf6d2e5555186b663bd02462142f4337108850dbf7d80f",
+            "location": "examples/pqc_usage.js",
+            "line": 6
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "false"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.ml-kem-768-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:15eec23a6be16f03cec5653a44508e4f6ed65ea70070b6a402afad728f6c8574",
+      "name": "RSA",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:294c7bdc0400bac98b6259afd54676ba1b7f62ef2d6ff58cf17b2d82cfa30068",
+            "location": "examples/nginx.conf",
+            "line": 5
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-authentication"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.ciphers\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:c51823e03e20abe89ede710b917975102053563075c561eeebcdb049e96d8b3a",
+      "name": "RSA",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:f912f75aed320a5277072f3a8ffae7fb45f25581327916fc0827168de0f944a0",
+            "location": "examples/nginx.conf",
+            "line": 4
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "configured-signature"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.tls.signatures\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "qrypt:algorithm:594554d869304a1bdc9d33697bf23a814923d3ab76e13ffe51d4335ff5a7a8af",
+      "name": "RSA",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "unknown"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "bom-ref": "qrypt:occurrence:176b3adab6f2016d0de240a04bd5efae396f5ebe7d7bcfb5a6c06b87084b147b",
+            "location": "examples/crypto_usage.js",
+            "line": 4
+          },
+          {
+            "bom-ref": "qrypt:occurrence:a5c6cd61eee486192de828fe51b42d3edceeaeb4b3fa3a2f34a8a7363585ae31",
+            "location": "examples/crypto_usage.py",
+            "line": 6
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "qrypt:operation",
+          "value": "key-generation"
+        },
+        {
+          "name": "qrypt:migration-candidate",
+          "value": "true"
+        },
+        {
+          "name": "qrypt:rule-ids",
+          "value": "[\"qrypt.javascript.rsa-keygen\", \"qrypt.python.rsa-keygen\"]"
+        },
+        {
+          "name": "qrypt:confidence",
+          "value": "high"
+        }
+      ]
+    }
+  ],
+  "compositions": [
+    {
+      "aggregate": "unknown"
+    }
+  ]
+}

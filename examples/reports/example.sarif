@@ -6,7 +6,7 @@
       "tool": {
         "driver": {
           "name": "QRYPT",
-          "version": "0.2.0",
+          "version": "0.3.0",
           "rules": [
             {
               "id": "qrypt.tls.groups",
@@ -930,9 +930,9 @@
       ],
       "properties": {
         "status": "completed",
-        "scanned_files": 11,
-        "skipped_files": 27,
-        "coverage": "Explicit supported Python/Node.js APIs and literal TLS settings only; TLS evidence does not establish effective or negotiated configuration; zero findings does not establish PQC readiness."
+        "scanned_files": 13,
+        "skipped_files": 35,
+        "coverage": "Explicit supported Python/Node.js APIs and literal TLS settings only; TLS evidence does not establish effective or negotiated configuration; zero findings does not establish PQC readiness. Observed PQC identifiers also do not establish system readiness."
       }
     }
   ]

@@ -4,7 +4,11 @@ A developer-first scanner for post-quantum cryptography (PQC) migration readines
 
 The project demonstrates cryptographic inventory, AppSec analysis, security automation, and DevSecOps integration. Its intended users are developers and security engineers reviewing cryptographic dependencies before migration.
 
-> **Status: Phase 3 implemented locally.** Source scanning, terminal/JSON/SARIF reports, GitHub Actions, and Docker are available, with local TLS analysis for the v0.2 milestone. GitHub workflow execution and the public Code Scanning demo remain pending; the current repository is private. CBOM and the dashboard are planned. This is an early development version, not a comprehensive cryptographic audit.
+> **Status: Phase 4 implemented locally.** Source scanning, terminal/JSON/SARIF/CBOM reports, GitHub Actions, and Docker are available, with local TLS analysis and cryptographic inventory for the v0.3 milestone. GitHub workflow execution and the public Code Scanning demo remain pending; the current repository is private. The offline dashboard is planned. This is an early development version, not a comprehensive cryptographic audit.
+
+![QRYPT terminal showing the banner and six PQC inventory observations](docs/assets/qrypt-terminal.png)
+
+Captured from a real terminal running `qrypt scan examples/pqc_usage.js`: six inventory observations and zero migration warnings. Scanning does not execute the example.
 
 ## Purpose
 
@@ -24,9 +28,11 @@ Available now:
 - GitHub Actions for tests, packaging, container smoke checks, and SARIF artifacts; completed scans upload on public repositories.
 - Literal Nginx/OpenSSL TLS group, signature and cipher configuration analysis, with unresolved-input diagnostics.
 - An interactive terminal banner that leaves machine-readable output untouched.
+- CycloneDX 1.6 CBOM export with observed algorithms, occurrence evidence and private scan diagnostics.
+- Supported Node.js ML-KEM/ML-DSA key-generation inventory, classified separately from migration warnings.
 - A non-root Docker image with a pinned base digest and dependency versions.
 
-Later releases will add CycloneDX cryptographic inventory and an offline HTML dashboard. Browser Web Crypto, TypeScript, and other libraries are outside the initial coverage.
+The next phase will add an offline HTML dashboard. Browser Web Crypto, TypeScript, and other libraries are outside the initial coverage.
 
 ## Architecture
 
@@ -38,13 +44,13 @@ flowchart TD
     T --> D
     D --> E[Terminal and JSON reports]
     D --> F[SARIF: GitHub Code Scanning]
-    D --> G[CycloneDX CBOM: later phase]
+    D --> G[CycloneDX 1.6 CBOM]
     D --> H[Offline HTML dashboard: later phase]
 ```
 
 Semgrep handles syntax-aware matching; QRYPT adds cryptographic interpretation and reporting. Each finding includes a stable rule ID, relative file location, algorithm evidence, operation where identifiable, confidence, and migration-review guidance. Confidence describes the matched API evidence, not exploitability or business risk.
 
-Implementation uses Python 3.12+, `argparse`, setuptools, and Semgrep CE 1.177.0. Source and bundled rules live under `src/qrypt/`; tests and annotated rule fixtures live under `tests/`. The `examples/` directory contains scan inputs. Terminal, JSON, and SARIF reports share one finding model.
+Implementation uses Python 3.12+, `argparse`, setuptools, and Semgrep CE 1.177.0. Source and bundled rules live under `src/qrypt/`; tests and annotated rule fixtures live under `tests/`. The `examples/` directory contains scan inputs. Terminal, JSON, SARIF, and CBOM reports share one normalized evidence model. The `inventory` array includes all supported migration candidates plus supported PQC observations; `findings` contains only migration candidates.
 
 ## Installation and Usage
 
@@ -57,7 +63,7 @@ python -m pip install -e .
 qrypt scan examples
 ```
 
-The example directory produces 25 migration candidates across four files. Scanning does not import or execute them, so their application dependencies are not required. `python -m qrypt` is also supported.
+The example directory produces 25 migration candidates and 31 inventory observations across five files. Scanning does not import or execute them, so their application dependencies are not required. `python -m qrypt` is also supported.
 
 ```bash
 # Review supported source and configuration files in the current repository
@@ -69,13 +75,16 @@ qrypt scan ./examples --format json --output report.json
 # Export repository-relative findings for GitHub Code Scanning
 qrypt scan . --format sarif --output qrypt.sarif
 
+# Export a CycloneDX cryptographic inventory
+qrypt scan . --format cbom --output inventory.cdx.json
+
 # Explicitly enforce findings in CI
 qrypt scan . --fail-on-findings
 ```
 
-Terminal output is the default; completed interactive text scans show the QRYPT banner. Redirected output and report files have no banner. `--format json` produces JSON with `schema_version: 1`, completion status, file counts, findings, and errors. Reports go to standard output unless `--output` is supplied; diagnostics go to standard error.
+Terminal output is the default; completed interactive text scans show the QRYPT banner. Redirected output and report files have no banner. `--format json` produces JSON with `schema_version: 1`, completion status, file counts, findings, inventory, and errors. The additive `inventory` field retains source evidence and a `migration_candidate` boolean; supported PQC observations have that flag set to `false`. Reports go to standard output unless `--output` is supplied; diagnostics go to standard error.
 
-Output files must use `.json` for JSON, `.sarif` for SARIF, or `.txt` for terminal reports. Their parent directory must exist, and symlink destinations are rejected. Python, JavaScript, and Markdown files cannot be used as report destinations. An existing report destination is replaced atomically. Later phases will add `cbom` and `html` formats.
+Output files must use `.json` for JSON or CBOM, `.sarif` for SARIF, or `.txt` for terminal reports. Their parent directory must exist, and symlink destinations are rejected. Python, JavaScript, and Markdown files cannot be used as report destinations. An existing report destination is replaced atomically. The next phase will add `html` output.
 
 Scans support `.py`, `.js`, `.mjs`, `.cjs`, `.conf`, and `.cnf`, honor Git/Semgrep ignore rules, and exclude `.git`, virtual environments, `node_modules`, `vendor`, `build`, and `dist`. Analysis failures and source files skipped because of limits (including Semgrep's default size limit) produce relative-path diagnostics and exit code `2`; intentional ignore/exclusion decisions do not. A target with no scannable files also returns `2`. The Semgrep process has a 120-second time limit. QRYPT prefers the Semgrep executable installed alongside its interpreter, with a PATH fallback.
 
@@ -97,15 +106,15 @@ Paths are relative to the **scan target directory** (or the parent of a single-f
 
 Code Scanning upload is enabled only for public repositories. The current private personal repository retains SARIF artifacts; a public demo and hosted workflow verification remain pending. Publishing or changing visibility is a separate step. See [GitHub's upload instructions](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/integrate-with-existing-tools/upload-sarif-file).
 
-Example reports generated with `qrypt scan .` are in [`examples/reports/`](examples/reports/): 25 candidates from the two source and two TLS example files. Scan counts also include supported scanner source files.
+Example reports generated with `qrypt scan .` are in [`examples/reports/`](examples/reports/): 25 candidates and 31 observations from the three source and two TLS example files, including a schema-valid CBOM. Scan counts also include supported scanner source files.
 
 ## Docker
 
 ```bash
-docker build -t qrypt:0.2 .
+docker build -t qrypt:0.3 .
 docker run --rm --network none --read-only \
   --tmpfs /tmp:rw,noexec,nosuid,size=256m \
-  -v "$PWD:/workspace:ro" qrypt:0.2 scan . --format sarif > qrypt.sarif
+  -v "$PWD:/workspace:ro" qrypt:0.3 scan . --format sarif > qrypt.sarif
 ```
 
 The image uses Python 3.12 on Debian Bookworm, installs QRYPT outside the mounted checkout, and runs as UID/GID 65532. Mounted source must be readable by that user. Keep reports on the host through stdout; the checkout stays read-only. Installation needs network access, scanning does not.
@@ -122,7 +131,7 @@ Each phase must meet its completion criteria before the next begins. Release lab
 | **1 — Source scanner · complete** | Package the CLI; add Python and Node.js rules, terminal output, and JSON reports. | Installed CLI scans example projects; every rule has positive and negative fixtures; unrelated strings and comments do not trigger findings. |
 | **2 — SARIF and CI · v0.1 · local implementation complete** | Add SARIF, GitHub Actions, documented rule coverage, example reports, and a reproducible Docker image. | Validate SARIF; demonstrate alerts in a public repository; verify package installation, container execution, and exit codes. **First public release.** |
 | **3 — TLS configurations · v0.2 · complete locally** | Scan explicit Nginx and OpenSSL declarations for groups, signature algorithms, and relevant cipher settings. | Test declarations, comments, exclusions, and unresolved settings; distinguish configured intent from negotiated behavior. |
-| **4 — Cryptographic inventory · v0.3** | Export CycloneDX 1.6 CBOM for observed algorithms and supported occurrence evidence; recognize supported explicit ML-KEM/ML-DSA identifiers as inventory entries. | Validate against the CycloneDX schema; retain occurrence locations; do not invent dependency relationships or treat PQC identifiers as migration warnings. |
+| **4 — Cryptographic inventory · v0.3 · complete locally** | Export CycloneDX 1.6 CBOM for observed algorithms and supported occurrence evidence; recognize supported explicit ML-KEM/ML-DSA identifiers as inventory entries. | Validate against the CycloneDX schema; retain occurrence locations; do not invent dependency relationships or treat PQC identifiers as migration warnings. |
 | **5 — Dashboard and portfolio · v0.4** | Generate a self-contained HTML report with algorithm, rule, and file filters; add a demo GIF and measured scan results. | Report opens without a server or external assets, safely escapes content, and matches JSON findings; publish the demo, threat model, and evaluation methodology. |
 
 ## Detection Coverage
@@ -156,11 +165,31 @@ qrypt scan examples/openssl.cnf --format sarif --output tls.sarif
 | `ssl_conf_command Ciphersuites` | `Ciphersuites` | Recognizes standard TLS 1.3 symmetric suites without inferring key exchange or authentication |
 | `ssl_dhparam`, `ssl_conf_command DHParameters` | `DHParameters` | DH parameter-file references; files are not read |
 
-Four TLS report rules supplement the ten source rules. Findings describe **literal configured intent**, including declarations in inactive OpenSSL sections; they do not determine activation, inheritance, overrides, provider support, certificates or negotiated sessions. Group declarations use EC when key agreement versus signing cannot be inferred.
+Four TLS migration rules supplement ten classical source rules; six additional rules recognize supported PQC inventory. Findings describe **literal configured intent**, including declarations in inactive OpenSSL sections; they do not determine activation, inheritance, overrides, provider support, certificates or negotiated sessions. Group declarations use EC when key agreement versus signing cannot be inferred.
 
 Cipher `!` exclusions are permanent within a declaration; `-` removes earlier entries but permits re-addition; leading `+` only reorders existing entries. Authentication and key-exchange selectors remain distinct (`aRSA` versus `kRSA`). This is a bounded selector interpreter, not OpenSSL's full cipher expansion: unknown selectors, intersections, defaults such as `HIGH`/`DEFAULT`/`auto`, variables and unsupported algorithm names yield `TLSUnresolvedSetting` and exit `2`. Independently recognizable literal entries are retained even when other values are dynamic. Supported named cipher suites are bounded to ECDHE-RSA/ECDHE-ECDSA/DHE-RSA with listed AES CBC/GCM or ChaCha20-Poly1305 variants; the exact allowlist is in `src/qrypt/tls.py`. Unknown names remain unresolved.
 
 Includes are never followed and produce `TLSUnresolvedInclude`, even when they may be unrelated to TLS. Invalid supported syntax, unreadable files and encoding failures also make the scan incomplete. Diagnostics omit configuration values and referenced paths. Missing settings, certificates and inherited defaults remain outside coverage; zero findings is not a deployment assessment. Use native configuration validators separately before deployment.
+
+## Cryptographic Inventory and CBOM
+
+```bash
+# Observe supported PQC usage without enforcing migration warnings
+qrypt scan examples/pqc_usage.js --fail-on-findings
+
+# Write an inventory for supported source and TLS declarations
+qrypt scan . --format cbom --output inventory.cdx.json
+```
+
+Node.js `crypto` / `node:crypto` calls to `generateKeyPair` and `generateKeyPairSync` recognize the exact literal key types `ml-kem-512`, `ml-kem-768`, `ml-kem-1024`, `ml-dsa-44`, `ml-dsa-65`, and `ml-dsa-87`. Existing import/alias and shadowing controls apply. Scanning requires no Node runtime; using these key types in an application requires suitable Node/OpenSSL support (Node 24.7+ covers both families). Strings, dynamic identifiers, wrappers, Web Crypto, and Python PQC APIs remain outside this coverage.
+
+PQC observations appear in terminal/JSON/CBOM inventory. They do not create SARIF alerts or enforcement failures. Mixed projects retain classical migration candidates, and incomplete scans still exit `2`. The presence of a PQC identifier does not establish deployed support or readiness.
+
+CBOM uses CycloneDX **1.6 JSON** `cryptographic-asset` components grouped by observed algorithm and operation. Each asset includes relative occurrence paths/lines, deterministic asset/occurrence references, and QRYPT properties recording operation, rule IDs, confidence and migration-candidate classification. Distinct same-line calls retain distinct references. Column values are not exported as file offsets.
+
+ML-KEM and ML-DSA assets retain their supported parameter-set identifiers and `kem`/`signature` primitives. Generic EC/RSA key generation stays `unknown` when usage cannot be inferred. No dependency edges, key material, source snippets, inferred curve/key sizes, deployment claims or security scores are emitted.
+
+Metadata properties retain scan status, counts, coverage and private diagnostics. Successful bounded scans use composition `unknown`; incomplete scans use `incomplete` while retaining partial assets. These indicate inventory limitations, not a readiness score. JSON/SARIF/CBOM reports and screenshot are under `examples/reports/` and `docs/assets/`. Offline schema validation uses the licensed official schemas in `tests/schemas/cyclonedx-1.6/`.
 
 ## Testing and Evaluation
 
@@ -176,7 +205,7 @@ python -m build
 
 Build artifacts are written to the ignored `dist/` directory. Tests use the Semgrep executable installed alongside the active Python interpreter. Fixtures and scan examples are deliberately excluded from Ruff formatting so their annotated locations and input shapes remain stable.
 
-The suite uses pytest for CLI/report integration and real Semgrep scans of annotated rule fixtures. It also covers incomplete Python scans, exclusions, report privacy, unsafe output paths, atomic-write failures, timeouts, missing engines, and exit codes. SARIF validation runs offline against the vendored OASIS schema in `tests/schemas/`; CBOM validation is planned.
+The suite uses pytest for CLI/report integration and real Semgrep scans of annotated rule fixtures. It also covers incomplete Python scans, exclusions, report privacy, unsafe output paths, atomic-write failures, timeouts, missing engines, and exit codes. SARIF validation runs offline against the vendored OASIS schema in `tests/schemas/`; CBOM validation runs offline against the official CycloneDX 1.6 schema and its vendored references.
 
 Test import aliases, multiline calls, unrelated identifiers, symmetric/hash controls, malformed files, excluded directories, missing scanner dependencies, output failures, and each exit code. TLS tests cover negated cipher entries, variables/defaults/includes, multiline values, mixed targets, schema-valid SARIF, read/encoding failures, and oversized inputs. Banner tests cover TTY and output-mode boundaries.
 
@@ -199,6 +228,8 @@ Live TLS probing, hosted services, authentication, baseline management, and auto
 - [Semgrep Community Edition](https://semgrep.dev/products/community-edition/)
 - [Semgrep CLI reference](https://docs.semgrep.dev/cli-reference)
 - [GitHub: SARIF support for code scanning](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support)
+- [Node.js crypto API](https://nodejs.org/api/crypto.html)
+- [CycloneDX 1.6 JSON Schema](https://github.com/CycloneDX/specification/blob/1.6/schema/bom-1.6.schema.json)
 - [CycloneDX: Cryptography Bill of Materials](https://cyclonedx.org/capabilities/cbom/)
 - [Nginx: SSL module](https://nginx.org/en/docs/http/ngx_http_ssl_module.html)
 - [OpenSSL: TLS configuration commands](https://docs.openssl.org/3.0/man3/SSL_CONF_cmd/)
