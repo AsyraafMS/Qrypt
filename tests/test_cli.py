@@ -180,8 +180,8 @@ def test_invalid_engine_response_does_not_look_like_clean_scan(
     assert "invalid scan response" in capsys.readouterr().err
 
 
-def test_only_phase_one_output_formats_are_accepted(project):
-    result = run_cli("scan", project, "--format", "sarif")
+def test_planned_output_formats_are_rejected(project):
+    result = run_cli("scan", project, "--format", "cbom")
     assert result.returncode == 2
     assert "invalid choice" in result.stderr
 
@@ -205,3 +205,18 @@ def test_installed_engine_is_used_without_venv_on_path(project):
     result = run_cli("scan", project, "--format", "json", env={"PATH": "/usr/bin:/bin"})
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)["findings"][0]["algorithm"] == "RSA"
+
+
+def test_real_sarif_scan_preserves_private_source(project):
+    result = run_cli("scan", project, "--format", "sarif")
+    assert result.returncode == 0, result.stderr
+    report = json.loads(result.stdout)
+    finding = report["runs"][0]["results"][0]
+    assert finding["ruleId"] == "qrypt.python.rsa-keygen"
+    assert (
+        finding["locations"][0]["physicalLocation"]["artifactLocation"]["uri"]
+        == "app.py"
+    )
+    assert str(project) not in result.stdout
+    assert "DO_NOT_INCLUDE_THIS_SOURCE_IN_REPORTS" not in result.stdout
+    assert not (project / "executed.txt").exists()

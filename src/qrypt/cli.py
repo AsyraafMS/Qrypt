@@ -8,6 +8,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from qrypt.sarif import sarif_report
 from qrypt.scanner import scan
 
 
@@ -32,7 +33,7 @@ def _text_report(report: dict) -> str:
 
 
 def _validate_output(path: Path, output_format: str) -> None:
-    suffix = ".json" if output_format == "json" else ".txt"
+    suffix = {"json": ".json", "text": ".txt", "sarif": ".sarif"}[output_format]
     if path.suffix != suffix or path.is_symlink() or path.is_dir():
         raise ValueError(
             f"Output must be a regular {suffix} report path, not a symlink."
@@ -68,9 +69,11 @@ def main(argv: list[str] | None = None) -> int:
         "scan", help="Scan supported Python/Node.js files."
     )
     scan_parser.add_argument("path", type=Path)
-    scan_parser.add_argument("--format", choices=("text", "json"), default="text")
     scan_parser.add_argument(
-        "--output", type=Path, help="Write a .txt or .json report."
+        "--format", choices=("text", "json", "sarif"), default="text"
+    )
+    scan_parser.add_argument(
+        "--output", type=Path, help="Write a .txt, .json, or .sarif report."
     )
     scan_parser.add_argument("--fail-on-findings", action="store_true")
     arguments = parser.parse_args(argv)
@@ -78,11 +81,12 @@ def main(argv: list[str] | None = None) -> int:
         if arguments.output:
             _validate_output(arguments.output, arguments.format)
         report = scan(arguments.path)
-        content = (
-            json.dumps(report, indent=2) + "\n"
-            if arguments.format == "json"
-            else _text_report(report)
-        )
+        if arguments.format == "sarif":
+            content = json.dumps(sarif_report(report), indent=2) + "\n"
+        elif arguments.format == "json":
+            content = json.dumps(report, indent=2) + "\n"
+        else:
+            content = _text_report(report)
         if arguments.output:
             _write_report(arguments.output, content)
         else:

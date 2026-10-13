@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qrypt"
-version = "0.0.1"
+version = "0.1.0"
 description = "Local cryptographic migration-candidate scanner"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["semgrep==1.177.0"]
+dependencies = ["semgrep==1.177.0", "ruamel.yaml>=0.18.10,<0.20"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.9", "build>=1"]
+dev = ["pytest>=8", "ruff>=0.9", "build>=1", "jsonschema>=4.25"]
 
 [project.scripts]
 qrypt = "qrypt.cli:main"
