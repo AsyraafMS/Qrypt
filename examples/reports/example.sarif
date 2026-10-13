@@ -6,8 +6,80 @@
       "tool": {
         "driver": {
           "name": "QRYPT",
-          "version": "0.1.0",
+          "version": "0.2.0",
           "rules": [
+            {
+              "id": "qrypt.tls.groups",
+              "shortDescription": {
+                "text": "Explicit TLS group selection is a migration candidate requiring review."
+              },
+              "help": {
+                "text": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "pqc",
+                  "cryptographic-inventory"
+                ]
+              }
+            },
+            {
+              "id": "qrypt.tls.signatures",
+              "shortDescription": {
+                "text": "Explicit TLS signature selection is a migration candidate requiring review."
+              },
+              "help": {
+                "text": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "pqc",
+                  "cryptographic-inventory"
+                ]
+              }
+            },
+            {
+              "id": "qrypt.tls.ciphers",
+              "shortDescription": {
+                "text": "Explicit TLS cipher selection is a migration candidate requiring review."
+              },
+              "help": {
+                "text": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "pqc",
+                  "cryptographic-inventory"
+                ]
+              }
+            },
+            {
+              "id": "qrypt.tls.dhparam",
+              "shortDescription": {
+                "text": "Explicit TLS DH parameter reference is a migration candidate requiring review."
+              },
+              "help": {
+                "text": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "pqc",
+                  "cryptographic-inventory"
+                ]
+              }
+            },
             {
               "id": "qrypt.javascript.rsa-keygen",
               "shortDescription": {
@@ -207,7 +279,7 @@
       "results": [
         {
           "ruleId": "qrypt.javascript.rsa-keygen",
-          "ruleIndex": 0,
+          "ruleIndex": 4,
           "level": "warning",
           "message": {
             "text": "RSA / key-generation: migration candidate requiring verification. Review whether this key supports encryption or signatures, its lifetime, and compatible PQC migration options; do not replace it automatically."
@@ -233,7 +305,7 @@
         },
         {
           "ruleId": "qrypt.javascript.ec-keygen",
-          "ruleIndex": 1,
+          "ruleIndex": 5,
           "level": "warning",
           "message": {
             "text": "EC / key-generation: migration candidate requiring verification. Determine whether the key is used for signatures or key agreement before selecting a compatible PQC migration path."
@@ -259,7 +331,7 @@
         },
         {
           "ruleId": "qrypt.javascript.dh-keygen",
-          "ruleIndex": 2,
+          "ruleIndex": 6,
           "level": "warning",
           "message": {
             "text": "DH / key-generation: migration candidate requiring verification. Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
@@ -285,7 +357,7 @@
         },
         {
           "ruleId": "qrypt.javascript.ecdh",
-          "ruleIndex": 3,
+          "ruleIndex": 7,
           "level": "warning",
           "message": {
             "text": "ECDH / key-agreement-configuration: migration candidate requiring verification. Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
@@ -311,7 +383,7 @@
         },
         {
           "ruleId": "qrypt.javascript.dh",
-          "ruleIndex": 4,
+          "ruleIndex": 8,
           "level": "warning",
           "message": {
             "text": "DH / key-agreement-configuration: migration candidate requiring verification. Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
@@ -337,7 +409,7 @@
         },
         {
           "ruleId": "qrypt.python.rsa-keygen",
-          "ruleIndex": 5,
+          "ruleIndex": 9,
           "level": "warning",
           "message": {
             "text": "RSA / key-generation: migration candidate requiring verification. Review whether this key supports encryption or signatures, its lifetime, and compatible PQC migration options; do not replace it automatically."
@@ -363,7 +435,7 @@
         },
         {
           "ruleId": "qrypt.python.dh-parameters",
-          "ruleIndex": 6,
+          "ruleIndex": 10,
           "level": "warning",
           "message": {
             "text": "DH / parameter-generation: migration candidate requiring verification. Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
@@ -389,7 +461,7 @@
         },
         {
           "ruleId": "qrypt.python.ec-keygen",
-          "ruleIndex": 7,
+          "ruleIndex": 11,
           "level": "warning",
           "message": {
             "text": "EC / key-generation: migration candidate requiring verification. Determine whether the key is used for signatures or key agreement before selecting a compatible PQC migration path."
@@ -415,7 +487,7 @@
         },
         {
           "ruleId": "qrypt.python.ecdh",
-          "ruleIndex": 8,
+          "ruleIndex": 12,
           "level": "warning",
           "message": {
             "text": "ECDH / key-agreement-configuration: migration candidate requiring verification. Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment."
@@ -441,7 +513,7 @@
         },
         {
           "ruleId": "qrypt.python.ecdsa",
-          "ruleIndex": 9,
+          "ruleIndex": 13,
           "level": "warning",
           "message": {
             "text": "ECDSA / signature-configuration: migration candidate requiring verification. Review signing and verification dependencies and long-lived signatures; evaluate compatible PQC signature schemes."
@@ -464,13 +536,403 @@
             "operation": "signature-configuration",
             "confidence": "high"
           }
+        },
+        {
+          "ruleId": "qrypt.tls.groups",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "EC / configured-group: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "EC",
+            "operation": "configured-group",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.groups",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "ECDH / configured-group: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "ECDH",
+            "operation": "configured-group",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.signatures",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "ECDSA / configured-signature: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "ECDSA",
+            "operation": "configured-signature",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.signatures",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "RSA / configured-signature: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "RSA",
+            "operation": "configured-signature",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.ciphers",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "DH / configured-key-agreement: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "DH",
+            "operation": "configured-key-agreement",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.ciphers",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "ECDH / configured-key-agreement: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "ECDH",
+            "operation": "configured-key-agreement",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.ciphers",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "RSA / configured-authentication: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "RSA",
+            "operation": "configured-authentication",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.dhparam",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "DH / configured-parameter-reference: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/nginx.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "DH",
+            "operation": "configured-parameter-reference",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.groups",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "DH / configured-group: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/openssl.cnf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "DH",
+            "operation": "configured-group",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.groups",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "ECDH / configured-group: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/openssl.cnf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 3
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "ECDH",
+            "operation": "configured-group",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.signatures",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "ECDSA / configured-signature: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/openssl.cnf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "ECDSA",
+            "operation": "configured-signature",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.signatures",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "EdDSA / configured-signature: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/openssl.cnf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "EdDSA",
+            "operation": "configured-signature",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.ciphers",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "ECDH / configured-key-agreement: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/openssl.cnf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "ECDH",
+            "operation": "configured-key-agreement",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.ciphers",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "ECDSA / configured-authentication: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/openssl.cnf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 5
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "ECDSA",
+            "operation": "configured-authentication",
+            "confidence": "high"
+          }
+        },
+        {
+          "ruleId": "qrypt.tls.dhparam",
+          "ruleIndex": 3,
+          "level": "warning",
+          "message": {
+            "text": "DH / configured-parameter-reference: migration candidate requiring verification. Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/openssl.cnf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "properties": {
+            "algorithm": "DH",
+            "operation": "configured-parameter-reference",
+            "confidence": "high"
+          }
         }
       ],
       "properties": {
         "status": "completed",
-        "scanned_files": 7,
-        "skipped_files": 23,
-        "coverage": "Explicit supported Python and Node.js API calls only; zero findings does not establish PQC readiness."
+        "scanned_files": 11,
+        "skipped_files": 27,
+        "coverage": "Explicit supported Python/Node.js APIs and literal TLS settings only; TLS evidence does not establish effective or negotiated configuration; zero findings does not establish PQC readiness."
       }
     }
   ]

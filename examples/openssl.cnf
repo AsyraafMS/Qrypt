@@ -1,0 +1,7 @@
+# Literal declarations for scanning only; section activation is not inferred.
+[tls]
+Groups = X25519:ffdhe3072
+SignatureAlgorithms = ecdsa_secp256r1_sha256:ed25519
+CipherString = ECDHE-ECDSA-AES128-GCM-SHA256:!aRSA
+Ciphersuites = TLS_AES_128_GCM_SHA256
+DHParameters = ./dhparams.pem

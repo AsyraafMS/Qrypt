@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "status": "completed",
-  "scanned_files": 7,
-  "skipped_files": 21,
-  "coverage": "Explicit supported Python and Node.js API calls only; zero findings does not establish PQC readiness.",
+  "scanned_files": 11,
+  "skipped_files": 27,
+  "coverage": "Explicit supported Python/Node.js APIs and literal TLS settings only; TLS evidence does not establish effective or negotiated configuration; zero findings does not establish PQC readiness.",
   "findings": [
     {
       "rule_id": "qrypt.javascript.rsa-keygen",
@@ -104,6 +104,156 @@
       "operation": "signature-configuration",
       "confidence": "high",
       "guidance": "Review signing and verification dependencies and long-lived signatures; evaluate compatible PQC signature schemes."
+    },
+    {
+      "rule_id": "qrypt.tls.groups",
+      "path": "examples/nginx.conf",
+      "line": 3,
+      "column": 5,
+      "algorithm": "EC",
+      "operation": "configured-group",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.groups",
+      "path": "examples/nginx.conf",
+      "line": 3,
+      "column": 5,
+      "algorithm": "ECDH",
+      "operation": "configured-group",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.signatures",
+      "path": "examples/nginx.conf",
+      "line": 4,
+      "column": 5,
+      "algorithm": "ECDSA",
+      "operation": "configured-signature",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.signatures",
+      "path": "examples/nginx.conf",
+      "line": 4,
+      "column": 5,
+      "algorithm": "RSA",
+      "operation": "configured-signature",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.ciphers",
+      "path": "examples/nginx.conf",
+      "line": 5,
+      "column": 5,
+      "algorithm": "DH",
+      "operation": "configured-key-agreement",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.ciphers",
+      "path": "examples/nginx.conf",
+      "line": 5,
+      "column": 5,
+      "algorithm": "ECDH",
+      "operation": "configured-key-agreement",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.ciphers",
+      "path": "examples/nginx.conf",
+      "line": 5,
+      "column": 5,
+      "algorithm": "RSA",
+      "operation": "configured-authentication",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.dhparam",
+      "path": "examples/nginx.conf",
+      "line": 6,
+      "column": 5,
+      "algorithm": "DH",
+      "operation": "configured-parameter-reference",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.groups",
+      "path": "examples/openssl.cnf",
+      "line": 3,
+      "column": 1,
+      "algorithm": "DH",
+      "operation": "configured-group",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.groups",
+      "path": "examples/openssl.cnf",
+      "line": 3,
+      "column": 1,
+      "algorithm": "ECDH",
+      "operation": "configured-group",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.signatures",
+      "path": "examples/openssl.cnf",
+      "line": 4,
+      "column": 1,
+      "algorithm": "ECDSA",
+      "operation": "configured-signature",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.signatures",
+      "path": "examples/openssl.cnf",
+      "line": 4,
+      "column": 1,
+      "algorithm": "EdDSA",
+      "operation": "configured-signature",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.ciphers",
+      "path": "examples/openssl.cnf",
+      "line": 5,
+      "column": 1,
+      "algorithm": "ECDH",
+      "operation": "configured-key-agreement",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.ciphers",
+      "path": "examples/openssl.cnf",
+      "line": 5,
+      "column": 1,
+      "algorithm": "ECDSA",
+      "operation": "configured-authentication",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
+    },
+    {
+      "rule_id": "qrypt.tls.dhparam",
+      "path": "examples/openssl.cnf",
+      "line": 7,
+      "column": 1,
+      "algorithm": "DH",
+      "operation": "configured-parameter-reference",
+      "confidence": "high",
+      "guidance": "Review this literal declaration and its deployment context; verify inheritance, providers, certificate algorithms and negotiated behavior before choosing compatible PQC migration options."
     }
   ],
   "errors": []
