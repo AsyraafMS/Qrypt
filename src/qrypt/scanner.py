@@ -92,23 +92,25 @@ def scan(target: Path) -> dict:
         paths = payload["paths"]
         if not isinstance(paths["scanned"], list):
             raise ValueError
-        findings = []
+        findings, inventory_only = [], []
         for item in payload["results"]:
             metadata = item["extra"]["metadata"]
             if metadata.get("internal"):
                 continue
-            findings.append(
-                {
-                    "rule_id": item["check_id"],
-                    "path": _relative_path(item["path"], root),
-                    "line": item["start"]["line"],
-                    "column": item["start"]["col"],
-                    "algorithm": metadata["algorithm"],
-                    "operation": metadata["operation"],
-                    "confidence": metadata["confidence"],
-                    "guidance": metadata["guidance"],
-                }
-            )
+            entry = {
+                "rule_id": item["check_id"],
+                "path": _relative_path(item["path"], root),
+                "line": item["start"]["line"],
+                "column": item["start"]["col"],
+                "algorithm": metadata["algorithm"],
+                "operation": metadata["operation"],
+                "confidence": metadata["confidence"],
+                "guidance": metadata["guidance"],
+            }
+            if metadata.get("inventory_only"):
+                inventory_only.append({**entry, "migration_candidate": False})
+            else:
+                findings.append(entry)
         errors = []
         for item in payload["errors"]:
             error = {"type": item["type"]}
@@ -167,7 +169,8 @@ def scan(target: Path) -> dict:
             "coverage": "Explicit supported Python/Node.js APIs "
             "and literal TLS settings only; "
             "TLS evidence does not establish effective or negotiated configuration; "
-            "zero findings does not establish PQC readiness.",
+            "zero findings does not establish PQC readiness. "
+            "Observed PQC identifiers also do not establish system readiness.",
             "findings": sorted(
                 findings,
                 key=lambda item: (
@@ -175,6 +178,16 @@ def scan(target: Path) -> dict:
                     item["line"],
                     item["column"],
                     item["rule_id"],
+                ),
+            ),
+            "inventory": sorted(
+                [{**entry, "migration_candidate": True} for entry in findings]
+                + inventory_only,
+                key=lambda entry: (
+                    entry["path"],
+                    entry["line"],
+                    entry["column"],
+                    entry["rule_id"],
                 ),
             ),
             "errors": errors,

@@ -14,7 +14,10 @@ def sarif_report(report: dict) -> dict:
     descriptors = list(TLS_RULES)
     for path in sorted((Path(__file__).parent / "rules").glob("*.yml")):
         for rule in YAML(typ="safe").load(path.read_text(encoding="utf-8"))["rules"]:
-            if not rule["metadata"].get("internal"):
+            if not (
+                rule["metadata"].get("internal")
+                or rule["metadata"].get("inventory_only")
+            ):
                 descriptors.append(rule)
     for rule in descriptors:
         rules.append(

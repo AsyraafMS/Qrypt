@@ -127,3 +127,34 @@ function shadowedAliasProperty({makeKey}) {
     // ok: qrypt.javascript.rsa-keygen
     makeKey("rsa", {});
 }
+
+// ruleid: qrypt.javascript.ml-kem-512-keygen
+crypto.generateKeyPairSync("ml-kem-512", {});
+// ruleid: qrypt.javascript.ml-kem-768-keygen
+makeKey("ml-kem-768", {});
+// ruleid: qrypt.javascript.ml-kem-1024-keygen
+generateKeyPair("ml-kem-1024", {}, callback);
+// ruleid: qrypt.javascript.ml-dsa-44-keygen
+security.generateKeyPairSync("ml-dsa-44", {});
+// ruleid: qrypt.javascript.ml-dsa-65-keygen
+makeOtherKey("ml-dsa-65", {});
+// ruleid: qrypt.javascript.ml-dsa-87-keygen
+generateKeyPairSync("ml-dsa-87", {});
+// ok: qrypt.javascript.ml-kem-512-keygen
+const textOnly = "crypto.generateKeyPairSync('ml-kem-512', {})";
+// ok: qrypt.javascript.ml-kem-512-keygen
+unrelated.generateKeyPairSync("ml-kem-512", {});
+// ok: qrypt.javascript.ml-kem-512-keygen
+crypto.generateKeyPairSync("ml-kem-999", {});
+function shadowedPqc({crypto}) {
+    // ok: qrypt.javascript.ml-kem-512-keygen
+    crypto.generateKeyPairSync("ml-kem-512", {});
+}
+function shadowedNamedPqc(generateKeyPairSync) {
+    // ok: qrypt.javascript.ml-dsa-44-keygen
+    generateKeyPairSync("ml-dsa-44", {});
+}
+function shadowedAliasPqc({makeKey}) {
+    // ok: qrypt.javascript.ml-dsa-65-keygen
+    makeKey("ml-dsa-65", {});
+}

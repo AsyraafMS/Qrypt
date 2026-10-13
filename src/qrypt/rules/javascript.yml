@@ -420,3 +420,105 @@ rules:
     operation: key-agreement-configuration
     confidence: high
     guidance: Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment.
+
+- id: qrypt.javascript.ml-kem-512-keygen
+  languages: [javascript]
+  severity: INFO
+  message: Explicit ML-KEM-512 key generation is cryptographic inventory evidence.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']ml-kem-512["']$
+  metadata:
+    algorithm: ML-KEM-512
+    operation: key-generation
+    confidence: high
+    inventory_only: true
+    guidance: Verify implementation support and deployment context; an observed PQC identifier does not establish system readiness.
+
+- id: qrypt.javascript.ml-kem-768-keygen
+  languages: [javascript]
+  severity: INFO
+  message: Explicit ML-KEM-768 key generation is cryptographic inventory evidence.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']ml-kem-768["']$
+  metadata:
+    algorithm: ML-KEM-768
+    operation: key-generation
+    confidence: high
+    inventory_only: true
+    guidance: Verify implementation support and deployment context; an observed PQC identifier does not establish system readiness.
+
+- id: qrypt.javascript.ml-kem-1024-keygen
+  languages: [javascript]
+  severity: INFO
+  message: Explicit ML-KEM-1024 key generation is cryptographic inventory evidence.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']ml-kem-1024["']$
+  metadata:
+    algorithm: ML-KEM-1024
+    operation: key-generation
+    confidence: high
+    inventory_only: true
+    guidance: Verify implementation support and deployment context; an observed PQC identifier does not establish system readiness.
+
+- id: qrypt.javascript.ml-dsa-44-keygen
+  languages: [javascript]
+  severity: INFO
+  message: Explicit ML-DSA-44 key generation is cryptographic inventory evidence.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']ml-dsa-44["']$
+  metadata:
+    algorithm: ML-DSA-44
+    operation: key-generation
+    confidence: high
+    inventory_only: true
+    guidance: Verify implementation support and deployment context; an observed PQC identifier does not establish system readiness.
+
+- id: qrypt.javascript.ml-dsa-65-keygen
+  languages: [javascript]
+  severity: INFO
+  message: Explicit ML-DSA-65 key generation is cryptographic inventory evidence.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']ml-dsa-65["']$
+  metadata:
+    algorithm: ML-DSA-65
+    operation: key-generation
+    confidence: high
+    inventory_only: true
+    guidance: Verify implementation support and deployment context; an observed PQC identifier does not establish system readiness.
+
+- id: qrypt.javascript.ml-dsa-87-keygen
+  languages: [javascript]
+  severity: INFO
+  message: Explicit ML-DSA-87 key generation is cryptographic inventory evidence.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']ml-dsa-87["']$
+  metadata:
+    algorithm: ML-DSA-87
+    operation: key-generation
+    confidence: high
+    inventory_only: true
+    guidance: Verify implementation support and deployment context; an observed PQC identifier does not establish system readiness.

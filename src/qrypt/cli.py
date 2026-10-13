@@ -19,6 +19,8 @@ def _text_report(report: dict) -> str:
         f"Scanned {report['scanned_files']} supported files; "
         f"skipped {report['skipped_files']} files.",
         f"{len(report['findings'])} migration candidates requiring verification.",
+        f"{len(report.get('inventory', report['findings']))} "
+        "cryptographic inventory observations.",
     ]
     for finding in report["findings"]:
         lines.extend(
@@ -29,6 +31,18 @@ def _text_report(report: dict) -> str:
                 finding["guidance"],
             ]
         )
+    pqc = [
+        entry
+        for entry in report.get("inventory", [])
+        if not entry["migration_candidate"]
+    ]
+    if pqc:
+        lines.extend(["", "PQC inventory:"])
+        for entry in pqc:
+            lines.append(
+                f"{entry['path']}:{entry['line']}:{entry['column']} "
+                f"{entry['algorithm']} / {entry['operation']}"
+            )
     lines.extend(["", report["coverage"]])
     return "\n".join(lines) + "\n"
 
