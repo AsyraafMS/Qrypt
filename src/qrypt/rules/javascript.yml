@@ -10,29 +10,83 @@ rules:
     - patterns:
       - &node-namespace
         pattern-either:
-        - pattern-inside: "import * as $CRYPTO from $MODULE;\n..."
-        - pattern-inside: "import $CRYPTO from $MODULE;\n..."
-        - pattern-inside: "const $CRYPTO = require($MODULE);\n..."
+        - pattern-inside: |-
+            import * as $CRYPTO from $MODULE;
+            ...
+        - pattern-inside: |-
+            import $CRYPTO from $MODULE;
+            ...
+        - pattern-inside: |-
+            const $CRYPTO = require($MODULE);
+            ...
       - pattern-either:
         - pattern: $CRYPTO.generateKeyPairSync($ARG, ...)
         - pattern: $CRYPTO.generateKeyPair($ARG, ...)
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { generateKeyPairSync as $FUNC } from $MODULE;\n..."
-        - pattern-inside: "const { generateKeyPairSync: $FUNC } = require($MODULE);\n..."
-        - pattern-inside: "import { generateKeyPair as $FUNC } from $MODULE;\n..."
-        - pattern-inside: "const { generateKeyPair: $FUNC } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { generateKeyPairSync as $FUNC } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { generateKeyPairSync: $FUNC } = require($MODULE);
+            ...
+        - pattern-inside: |-
+            import { generateKeyPair as $FUNC } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { generateKeyPair: $FUNC } = require($MODULE);
+            ...
       - pattern: $FUNC($ARG, ...)
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { generateKeyPairSync } from $MODULE;\n..."
-        - pattern-inside: "const { generateKeyPairSync } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { generateKeyPairSync } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { generateKeyPairSync } = require($MODULE);
+            ...
       - pattern: generateKeyPairSync($ARG, ...)
+      - pattern-not-inside: function $F(..., generateKeyPairSync, ...) { ... }
+      - pattern-not-inside: function (..., generateKeyPairSync, ...) { ... }
+      - pattern-not-inside: (..., generateKeyPairSync, ...) => ...
+      - pattern-not-inside: |-
+          {
+          ...
+          const generateKeyPairSync = ...;
+          ...
+          }
+      - pattern-not-inside: |-
+          {
+          ...
+          let generateKeyPairSync = ...;
+          ...
+          }
+      - pattern-not-inside: function generateKeyPairSync(...) { ... }
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { generateKeyPair } from $MODULE;\n..."
-        - pattern-inside: "const { generateKeyPair } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { generateKeyPair } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { generateKeyPair } = require($MODULE);
+            ...
       - pattern: generateKeyPair($ARG, ...)
+      - pattern-not-inside: function $F(..., generateKeyPair, ...) { ... }
+      - pattern-not-inside: function (..., generateKeyPair, ...) { ... }
+      - pattern-not-inside: (..., generateKeyPair, ...) => ...
+      - pattern-not-inside: |-
+          {
+          ...
+          const generateKeyPair = ...;
+          ...
+          }
+      - pattern-not-inside: |-
+          {
+          ...
+          let generateKeyPair = ...;
+          ...
+          }
+      - pattern-not-inside: function generateKeyPair(...) { ... }
   - &node-module
     metavariable-regex:
       metavariable: $MODULE
@@ -90,14 +144,38 @@ rules:
         - pattern: $CRYPTO.createECDH($ARG, ...)
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { createECDH as $FUNC } from $MODULE;\n..."
-        - pattern-inside: "const { createECDH: $FUNC } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { createECDH as $FUNC } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { createECDH: $FUNC } = require($MODULE);
+            ...
       - pattern: $FUNC($ARG, ...)
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { createECDH } from $MODULE;\n..."
-        - pattern-inside: "const { createECDH } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { createECDH } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { createECDH } = require($MODULE);
+            ...
       - pattern: createECDH($ARG, ...)
+      - pattern-not-inside: function $F(..., createECDH, ...) { ... }
+      - pattern-not-inside: function (..., createECDH, ...) { ... }
+      - pattern-not-inside: (..., createECDH, ...) => ...
+      - pattern-not-inside: |-
+          {
+          ...
+          const createECDH = ...;
+          ...
+          }
+      - pattern-not-inside: |-
+          {
+          ...
+          let createECDH = ...;
+          ...
+          }
+      - pattern-not-inside: function createECDH(...) { ... }
   - *node-module
   metadata:
     algorithm: ECDH
@@ -119,28 +197,100 @@ rules:
         - pattern: $CRYPTO.createDiffieHellmanGroup($ARG, ...)
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { createDiffieHellman as $FUNC } from $MODULE;\n..."
-        - pattern-inside: "const { createDiffieHellman: $FUNC } = require($MODULE);\n..."
-        - pattern-inside: "import { getDiffieHellman as $FUNC } from $MODULE;\n..."
-        - pattern-inside: "const { getDiffieHellman: $FUNC } = require($MODULE);\n..."
-        - pattern-inside: "import { createDiffieHellmanGroup as $FUNC } from $MODULE;\n..."
-        - pattern-inside: "const { createDiffieHellmanGroup: $FUNC } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { createDiffieHellman as $FUNC } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { createDiffieHellman: $FUNC } = require($MODULE);
+            ...
+        - pattern-inside: |-
+            import { getDiffieHellman as $FUNC } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { getDiffieHellman: $FUNC } = require($MODULE);
+            ...
+        - pattern-inside: |-
+            import { createDiffieHellmanGroup as $FUNC } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { createDiffieHellmanGroup: $FUNC } = require($MODULE);
+            ...
       - pattern: $FUNC($ARG, ...)
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { createDiffieHellman } from $MODULE;\n..."
-        - pattern-inside: "const { createDiffieHellman } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { createDiffieHellman } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { createDiffieHellman } = require($MODULE);
+            ...
       - pattern: createDiffieHellman($ARG, ...)
+      - pattern-not-inside: function $F(..., createDiffieHellman, ...) { ... }
+      - pattern-not-inside: function (..., createDiffieHellman, ...) { ... }
+      - pattern-not-inside: (..., createDiffieHellman, ...) => ...
+      - pattern-not-inside: |-
+          {
+          ...
+          const createDiffieHellman = ...;
+          ...
+          }
+      - pattern-not-inside: |-
+          {
+          ...
+          let createDiffieHellman = ...;
+          ...
+          }
+      - pattern-not-inside: function createDiffieHellman(...) { ... }
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { getDiffieHellman } from $MODULE;\n..."
-        - pattern-inside: "const { getDiffieHellman } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { getDiffieHellman } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { getDiffieHellman } = require($MODULE);
+            ...
       - pattern: getDiffieHellman($ARG, ...)
+      - pattern-not-inside: function $F(..., getDiffieHellman, ...) { ... }
+      - pattern-not-inside: function (..., getDiffieHellman, ...) { ... }
+      - pattern-not-inside: (..., getDiffieHellman, ...) => ...
+      - pattern-not-inside: |-
+          {
+          ...
+          const getDiffieHellman = ...;
+          ...
+          }
+      - pattern-not-inside: |-
+          {
+          ...
+          let getDiffieHellman = ...;
+          ...
+          }
+      - pattern-not-inside: function getDiffieHellman(...) { ... }
     - patterns:
       - pattern-either:
-        - pattern-inside: "import { createDiffieHellmanGroup } from $MODULE;\n..."
-        - pattern-inside: "const { createDiffieHellmanGroup } = require($MODULE);\n..."
+        - pattern-inside: |-
+            import { createDiffieHellmanGroup } from $MODULE;
+            ...
+        - pattern-inside: |-
+            const { createDiffieHellmanGroup } = require($MODULE);
+            ...
       - pattern: createDiffieHellmanGroup($ARG, ...)
+      - pattern-not-inside: function $F(..., createDiffieHellmanGroup, ...) { ... }
+      - pattern-not-inside: function (..., createDiffieHellmanGroup, ...) { ... }
+      - pattern-not-inside: (..., createDiffieHellmanGroup, ...) => ...
+      - pattern-not-inside: |-
+          {
+          ...
+          const createDiffieHellmanGroup = ...;
+          ...
+          }
+      - pattern-not-inside: |-
+          {
+          ...
+          let createDiffieHellmanGroup = ...;
+          ...
+          }
+      - pattern-not-inside: function createDiffieHellmanGroup(...) { ... }
   - *node-module
   metadata:
     algorithm: DH

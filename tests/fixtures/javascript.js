@@ -46,3 +46,31 @@ function shadowed(crypto) {
 import { generateKeyPairSync as unrelatedKey } from "unrelated";
 // ok: qrypt.javascript.rsa-keygen
 unrelatedKey("rsa", {});
+
+import defaultCrypto from "crypto";
+// ruleid: qrypt.javascript.rsa-keygen
+defaultCrypto.generateKeyPairSync("rsa", {modulusLength: 2048});
+const { createECDH: exchange } = require("node:crypto");
+// ruleid: qrypt.javascript.ecdh
+exchange("prime256v1");
+function shadowedAlias(makeKey) {
+    // ok: qrypt.javascript.rsa-keygen
+    makeKey("rsa", {});
+}
+function shadowedNamed(generateKeyPair) {
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPair("rsa", {}, callback);
+}
+const shadowedArrow = (generateKeyPair) => {
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPair("rsa", {}, callback);
+};
+const shadowedExpression = function (generateKeyPair) {
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPair("rsa", {}, callback);
+};
+function shadowedLocal() {
+    const generateKeyPair = otherLibrary;
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPair("rsa", {}, callback);
+}

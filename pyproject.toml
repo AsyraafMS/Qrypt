@@ -13,6 +13,9 @@ dependencies = ["semgrep==1.177.0"]
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.9", "build>=1"]
 
+[project.scripts]
+qrypt = "qrypt.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
