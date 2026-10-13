@@ -23,6 +23,7 @@ REPORT = {
         (False, "text", False),
         (True, "json", False),
         (True, "sarif", False),
+        (True, "cbom", False),
     ],
 )
 def test_banner_is_only_for_interactive_text(

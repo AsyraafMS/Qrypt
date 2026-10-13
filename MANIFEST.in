@@ -2,3 +2,4 @@ recursive-include tests/fixtures *.py *.js
 recursive-include examples *.py *.js
 recursive-include tests/schemas *.json *.md
 recursive-include examples *.conf *.cnf *.json *.sarif
+recursive-include tests/schemas *.txt

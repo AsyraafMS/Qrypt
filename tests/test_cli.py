@@ -181,7 +181,7 @@ def test_invalid_engine_response_does_not_look_like_clean_scan(
 
 
 def test_planned_output_formats_are_rejected(project):
-    result = run_cli("scan", project, "--format", "cbom")
+    result = run_cli("scan", project, "--format", "html")
     assert result.returncode == 2
     assert "invalid choice" in result.stderr
 

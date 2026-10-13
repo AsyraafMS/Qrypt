@@ -9,6 +9,7 @@ import tempfile
 from pathlib import Path
 
 from qrypt.banner import BANNER
+from qrypt.cbom import cbom_report
 from qrypt.sarif import sarif_report
 from qrypt.scanner import scan
 
@@ -48,7 +49,9 @@ def _text_report(report: dict) -> str:
 
 
 def _validate_output(path: Path, output_format: str) -> None:
-    suffix = {"json": ".json", "text": ".txt", "sarif": ".sarif"}[output_format]
+    suffix = {"json": ".json", "text": ".txt", "sarif": ".sarif", "cbom": ".json"}[
+        output_format
+    ]
     if path.suffix != suffix or path.is_symlink() or path.is_dir():
         raise ValueError(
             f"Output must be a regular {suffix} report path, not a symlink."
@@ -85,7 +88,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     scan_parser.add_argument("path", type=Path)
     scan_parser.add_argument(
-        "--format", choices=("text", "json", "sarif"), default="text"
+        "--format", choices=("text", "json", "sarif", "cbom"), default="text"
     )
     scan_parser.add_argument(
         "--output", type=Path, help="Write a .txt, .json, or .sarif report."
@@ -96,7 +99,9 @@ def main(argv: list[str] | None = None) -> int:
         if arguments.output:
             _validate_output(arguments.output, arguments.format)
         report = scan(arguments.path)
-        if arguments.format == "sarif":
+        if arguments.format == "cbom":
+            content = json.dumps(cbom_report(report), indent=2) + "\n"
+        elif arguments.format == "sarif":
             content = json.dumps(sarif_report(report), indent=2) + "\n"
         elif arguments.format == "json":
             content = json.dumps(report, indent=2) + "\n"
