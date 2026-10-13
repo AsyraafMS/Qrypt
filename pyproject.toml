@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qrypt"
+version = "0.0.1"
+description = "Local cryptographic migration-candidate scanner"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["semgrep==1.177.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.9", "build>=1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+qrypt = ["rules/*.yml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+exclude = ["tests/fixtures", "examples"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

@@ -1,0 +1,149 @@
+rules:
+- id: qrypt.javascript.rsa-keygen
+  languages:
+  - javascript
+  severity: WARNING
+  message: RSA key-generation is a PQC migration candidate requiring review.
+  patterns:
+  - &node-keygen
+    pattern-either:
+    - patterns:
+      - &node-namespace
+        pattern-either:
+        - pattern-inside: "import * as $CRYPTO from $MODULE;\n..."
+        - pattern-inside: "import $CRYPTO from $MODULE;\n..."
+        - pattern-inside: "const $CRYPTO = require($MODULE);\n..."
+      - pattern-either:
+        - pattern: $CRYPTO.generateKeyPairSync($ARG, ...)
+        - pattern: $CRYPTO.generateKeyPair($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { generateKeyPairSync as $FUNC } from $MODULE;\n..."
+        - pattern-inside: "const { generateKeyPairSync: $FUNC } = require($MODULE);\n..."
+        - pattern-inside: "import { generateKeyPair as $FUNC } from $MODULE;\n..."
+        - pattern-inside: "const { generateKeyPair: $FUNC } = require($MODULE);\n..."
+      - pattern: $FUNC($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { generateKeyPairSync } from $MODULE;\n..."
+        - pattern-inside: "const { generateKeyPairSync } = require($MODULE);\n..."
+      - pattern: generateKeyPairSync($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { generateKeyPair } from $MODULE;\n..."
+        - pattern-inside: "const { generateKeyPair } = require($MODULE);\n..."
+      - pattern: generateKeyPair($ARG, ...)
+  - &node-module
+    metavariable-regex:
+      metavariable: $MODULE
+      regex: ^["']?(node:)?crypto["']?$
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']rsa(-pss)?["']$
+  metadata:
+    algorithm: RSA
+    operation: key-generation
+    confidence: high
+    guidance: Review whether this key supports encryption or signatures, its lifetime, and compatible PQC migration options; do not replace it automatically.
+- id: qrypt.javascript.ec-keygen
+  languages:
+  - javascript
+  severity: WARNING
+  message: EC key-generation is a PQC migration candidate requiring review.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']ec["']$
+  metadata:
+    algorithm: EC
+    operation: key-generation
+    confidence: high
+    guidance: Determine whether the key is used for signatures or key agreement before selecting a compatible PQC migration path.
+- id: qrypt.javascript.dh-keygen
+  languages:
+  - javascript
+  severity: WARNING
+  message: DH key-generation is a PQC migration candidate requiring review.
+  patterns:
+  - *node-keygen
+  - *node-module
+  - metavariable-regex:
+      metavariable: $ARG
+      regex: ^["']dh["']$
+  metadata:
+    algorithm: DH
+    operation: key-generation
+    confidence: high
+    guidance: Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment.
+- id: qrypt.javascript.ecdh
+  languages:
+  - javascript
+  severity: WARNING
+  message: ECDH key-agreement-configuration is a PQC migration candidate requiring review.
+  patterns:
+  - pattern-either:
+    - patterns:
+      - *node-namespace
+      - pattern-either:
+        - pattern: $CRYPTO.createECDH($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { createECDH as $FUNC } from $MODULE;\n..."
+        - pattern-inside: "const { createECDH: $FUNC } = require($MODULE);\n..."
+      - pattern: $FUNC($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { createECDH } from $MODULE;\n..."
+        - pattern-inside: "const { createECDH } = require($MODULE);\n..."
+      - pattern: createECDH($ARG, ...)
+  - *node-module
+  metadata:
+    algorithm: ECDH
+    operation: key-agreement-configuration
+    confidence: high
+    guidance: Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment.
+- id: qrypt.javascript.dh
+  languages:
+  - javascript
+  severity: WARNING
+  message: DH key-agreement-configuration is a PQC migration candidate requiring review.
+  patterns:
+  - pattern-either:
+    - patterns:
+      - *node-namespace
+      - pattern-either:
+        - pattern: $CRYPTO.createDiffieHellman($ARG, ...)
+        - pattern: $CRYPTO.getDiffieHellman($ARG, ...)
+        - pattern: $CRYPTO.createDiffieHellmanGroup($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { createDiffieHellman as $FUNC } from $MODULE;\n..."
+        - pattern-inside: "const { createDiffieHellman: $FUNC } = require($MODULE);\n..."
+        - pattern-inside: "import { getDiffieHellman as $FUNC } from $MODULE;\n..."
+        - pattern-inside: "const { getDiffieHellman: $FUNC } = require($MODULE);\n..."
+        - pattern-inside: "import { createDiffieHellmanGroup as $FUNC } from $MODULE;\n..."
+        - pattern-inside: "const { createDiffieHellmanGroup: $FUNC } = require($MODULE);\n..."
+      - pattern: $FUNC($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { createDiffieHellman } from $MODULE;\n..."
+        - pattern-inside: "const { createDiffieHellman } = require($MODULE);\n..."
+      - pattern: createDiffieHellman($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { getDiffieHellman } from $MODULE;\n..."
+        - pattern-inside: "const { getDiffieHellman } = require($MODULE);\n..."
+      - pattern: getDiffieHellman($ARG, ...)
+    - patterns:
+      - pattern-either:
+        - pattern-inside: "import { createDiffieHellmanGroup } from $MODULE;\n..."
+        - pattern-inside: "const { createDiffieHellmanGroup } = require($MODULE);\n..."
+      - pattern: createDiffieHellmanGroup($ARG, ...)
+  - *node-module
+  metadata:
+    algorithm: DH
+    operation: key-agreement-configuration
+    confidence: high
+    guidance: Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment.

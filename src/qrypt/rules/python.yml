@@ -1,0 +1,57 @@
+rules:
+  - id: qrypt.python.rsa-keygen
+    languages: [python]
+    severity: WARNING
+    message: RSA key generation is a PQC migration candidate requiring review.
+    pattern-either:
+      - pattern: cryptography.hazmat.primitives.asymmetric.rsa.generate_private_key(...)
+      - pattern: Crypto.PublicKey.RSA.generate(...)
+      - pattern: Cryptodome.PublicKey.RSA.generate(...)
+    metadata:
+      algorithm: RSA
+      operation: key-generation
+      confidence: high
+      guidance: Review whether this key supports encryption or signatures, its lifetime, and compatible PQC migration options; do not replace it automatically.
+  - id: qrypt.python.dh-parameters
+    languages: [python]
+    severity: WARNING
+    message: DH parameter generation is a PQC migration candidate requiring review.
+    pattern: cryptography.hazmat.primitives.asymmetric.dh.generate_parameters(...)
+    metadata:
+      algorithm: DH
+      operation: parameter-generation
+      confidence: high
+      guidance: Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment.
+  - id: qrypt.python.ec-keygen
+    languages: [python]
+    severity: WARNING
+    message: EC key generation is a PQC migration candidate requiring review.
+    pattern-either:
+      - pattern: cryptography.hazmat.primitives.asymmetric.ec.generate_private_key(...)
+      - pattern: Crypto.PublicKey.ECC.generate(...)
+      - pattern: Cryptodome.PublicKey.ECC.generate(...)
+    metadata:
+      algorithm: EC
+      operation: key-generation
+      confidence: high
+      guidance: Determine whether the key is used for signatures or key agreement before selecting a compatible PQC migration path.
+  - id: qrypt.python.ecdh
+    languages: [python]
+    severity: WARNING
+    message: ECDH configuration is a PQC migration candidate requiring review.
+    pattern: cryptography.hazmat.primitives.asymmetric.ec.ECDH(...)
+    metadata:
+      algorithm: ECDH
+      operation: key-agreement-configuration
+      confidence: high
+      guidance: Review the key-agreement workflow and confidentiality lifetime; evaluate compatible PQC or hybrid key establishment.
+  - id: qrypt.python.ecdsa
+    languages: [python]
+    severity: WARNING
+    message: ECDSA configuration is a PQC migration candidate requiring review.
+    pattern: cryptography.hazmat.primitives.asymmetric.ec.ECDSA(...)
+    metadata:
+      algorithm: ECDSA
+      operation: signature-configuration
+      confidence: high
+      guidance: Review signing and verification dependencies and long-lived signatures; evaluate compatible PQC signature schemes.
