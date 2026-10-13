@@ -22,6 +22,17 @@ rules:
       - pattern-either:
         - pattern: $CRYPTO.generateKeyPairSync($ARG, ...)
         - pattern: $CRYPTO.generateKeyPair($ARG, ...)
+      - pattern-not-inside: function $F(..., {$CRYPTO}, ...) { ... }
+      - pattern-not-inside: function (..., {$CRYPTO}, ...) { ... }
+      - pattern-not-inside: (..., {$CRYPTO}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: $CRYPTO}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: $CRYPTO}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: $CRYPTO}, ...) => ...'
+      - pattern: $CALLEE($ARG, ...)
+      - metavariable-pattern:
+          metavariable: $CALLEE
+          language: generic
+          pattern: $CRYPTO.$MEMBER
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -37,6 +48,12 @@ rules:
             const { generateKeyPair: $FUNC } = require($MODULE);
             ...
       - pattern: $FUNC($ARG, ...)
+      - pattern-not-inside: function $F(..., {$FUNC}, ...) { ... }
+      - pattern-not-inside: function (..., {$FUNC}, ...) { ... }
+      - pattern-not-inside: (..., {$FUNC}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: $FUNC}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: $FUNC}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: $FUNC}, ...) => ...'
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -62,6 +79,18 @@ rules:
           ...
           }
       - pattern-not-inside: function generateKeyPairSync(...) { ... }
+      - pattern-not-inside: |-
+          {
+          ...
+          var generateKeyPairSync = ...;
+          ...
+          }
+      - pattern-not-inside: function $F(..., {generateKeyPairSync}, ...) { ... }
+      - pattern-not-inside: function (..., {generateKeyPairSync}, ...) { ... }
+      - pattern-not-inside: (..., {generateKeyPairSync}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: generateKeyPairSync}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: generateKeyPairSync}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: generateKeyPairSync}, ...) => ...'
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -87,6 +116,18 @@ rules:
           ...
           }
       - pattern-not-inside: function generateKeyPair(...) { ... }
+      - pattern-not-inside: |-
+          {
+          ...
+          var generateKeyPair = ...;
+          ...
+          }
+      - pattern-not-inside: function $F(..., {generateKeyPair}, ...) { ... }
+      - pattern-not-inside: function (..., {generateKeyPair}, ...) { ... }
+      - pattern-not-inside: (..., {generateKeyPair}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: generateKeyPair}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: generateKeyPair}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: generateKeyPair}, ...) => ...'
   - &node-module
     metavariable-regex:
       metavariable: $MODULE
@@ -142,6 +183,17 @@ rules:
       - *node-namespace
       - pattern-either:
         - pattern: $CRYPTO.createECDH($ARG, ...)
+      - pattern-not-inside: function $F(..., {$CRYPTO}, ...) { ... }
+      - pattern-not-inside: function (..., {$CRYPTO}, ...) { ... }
+      - pattern-not-inside: (..., {$CRYPTO}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: $CRYPTO}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: $CRYPTO}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: $CRYPTO}, ...) => ...'
+      - pattern: $CALLEE($ARG, ...)
+      - metavariable-pattern:
+          metavariable: $CALLEE
+          language: generic
+          pattern: $CRYPTO.$MEMBER
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -151,6 +203,12 @@ rules:
             const { createECDH: $FUNC } = require($MODULE);
             ...
       - pattern: $FUNC($ARG, ...)
+      - pattern-not-inside: function $F(..., {$FUNC}, ...) { ... }
+      - pattern-not-inside: function (..., {$FUNC}, ...) { ... }
+      - pattern-not-inside: (..., {$FUNC}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: $FUNC}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: $FUNC}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: $FUNC}, ...) => ...'
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -176,6 +234,18 @@ rules:
           ...
           }
       - pattern-not-inside: function createECDH(...) { ... }
+      - pattern-not-inside: |-
+          {
+          ...
+          var createECDH = ...;
+          ...
+          }
+      - pattern-not-inside: function $F(..., {createECDH}, ...) { ... }
+      - pattern-not-inside: function (..., {createECDH}, ...) { ... }
+      - pattern-not-inside: (..., {createECDH}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: createECDH}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: createECDH}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: createECDH}, ...) => ...'
   - *node-module
   metadata:
     algorithm: ECDH
@@ -195,6 +265,17 @@ rules:
         - pattern: $CRYPTO.createDiffieHellman($ARG, ...)
         - pattern: $CRYPTO.getDiffieHellman($ARG, ...)
         - pattern: $CRYPTO.createDiffieHellmanGroup($ARG, ...)
+      - pattern-not-inside: function $F(..., {$CRYPTO}, ...) { ... }
+      - pattern-not-inside: function (..., {$CRYPTO}, ...) { ... }
+      - pattern-not-inside: (..., {$CRYPTO}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: $CRYPTO}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: $CRYPTO}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: $CRYPTO}, ...) => ...'
+      - pattern: $CALLEE($ARG, ...)
+      - metavariable-pattern:
+          metavariable: $CALLEE
+          language: generic
+          pattern: $CRYPTO.$MEMBER
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -216,6 +297,12 @@ rules:
             const { createDiffieHellmanGroup: $FUNC } = require($MODULE);
             ...
       - pattern: $FUNC($ARG, ...)
+      - pattern-not-inside: function $F(..., {$FUNC}, ...) { ... }
+      - pattern-not-inside: function (..., {$FUNC}, ...) { ... }
+      - pattern-not-inside: (..., {$FUNC}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: $FUNC}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: $FUNC}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: $FUNC}, ...) => ...'
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -241,6 +328,18 @@ rules:
           ...
           }
       - pattern-not-inside: function createDiffieHellman(...) { ... }
+      - pattern-not-inside: |-
+          {
+          ...
+          var createDiffieHellman = ...;
+          ...
+          }
+      - pattern-not-inside: function $F(..., {createDiffieHellman}, ...) { ... }
+      - pattern-not-inside: function (..., {createDiffieHellman}, ...) { ... }
+      - pattern-not-inside: (..., {createDiffieHellman}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: createDiffieHellman}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: createDiffieHellman}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: createDiffieHellman}, ...) => ...'
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -266,6 +365,18 @@ rules:
           ...
           }
       - pattern-not-inside: function getDiffieHellman(...) { ... }
+      - pattern-not-inside: |-
+          {
+          ...
+          var getDiffieHellman = ...;
+          ...
+          }
+      - pattern-not-inside: function $F(..., {getDiffieHellman}, ...) { ... }
+      - pattern-not-inside: function (..., {getDiffieHellman}, ...) { ... }
+      - pattern-not-inside: (..., {getDiffieHellman}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: getDiffieHellman}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: getDiffieHellman}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: getDiffieHellman}, ...) => ...'
     - patterns:
       - pattern-either:
         - pattern-inside: |-
@@ -291,6 +402,18 @@ rules:
           ...
           }
       - pattern-not-inside: function createDiffieHellmanGroup(...) { ... }
+      - pattern-not-inside: |-
+          {
+          ...
+          var createDiffieHellmanGroup = ...;
+          ...
+          }
+      - pattern-not-inside: function $F(..., {createDiffieHellmanGroup}, ...) { ... }
+      - pattern-not-inside: function (..., {createDiffieHellmanGroup}, ...) { ... }
+      - pattern-not-inside: (..., {createDiffieHellmanGroup}, ...) => ...
+      - pattern-not-inside: 'function $F(..., {$PROPERTY: createDiffieHellmanGroup}, ...) { ... }'
+      - pattern-not-inside: 'function (..., {$PROPERTY: createDiffieHellmanGroup}, ...) { ... }'
+      - pattern-not-inside: '(..., {$PROPERTY: createDiffieHellmanGroup}, ...) => ...'
   - *node-module
   metadata:
     algorithm: DH

@@ -80,3 +80,50 @@ makeKey(
     "rsa",
     {modulusLength: 2048},
 );
+
+import { generateKeyPairSync } from "crypto";
+function shadowedVar() {
+    var generateKeyPairSync = unrelated;
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPairSync("rsa", {});
+}
+function shadowedDestructured({generateKeyPairSync}) {
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPairSync("rsa", {});
+}
+const shadowedDestructuredArrow = ({generateKeyPairSync}) => {
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPairSync("rsa", {});
+};
+const shadowedDestructuredExpression = function ({generateKeyPairSync}) {
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPairSync("rsa", {});
+};
+function shadowedRenamedProperty({keygen: generateKeyPairSync}) {
+    // ok: qrypt.javascript.rsa-keygen
+    generateKeyPairSync("rsa", {});
+}
+function shadowedExchangeVar() {
+    var createECDH = unrelated;
+    // ok: qrypt.javascript.ecdh
+    createECDH("prime256v1");
+}
+function shadowedExchangeProperty({createECDH}) {
+    // ok: qrypt.javascript.ecdh
+    createECDH("prime256v1");
+}
+
+// ruleid: qrypt.javascript.rsa-keygen
+generateKeyPairSync("rsa", {modulusLength: 2048});
+function legitimateNamedUse({options}) {
+    // ruleid: qrypt.javascript.rsa-keygen
+    return generateKeyPairSync("rsa", options);
+}
+function shadowedNamespaceProperty({crypto}) {
+    // ok: qrypt.javascript.rsa-keygen
+    crypto.generateKeyPairSync("rsa", {});
+}
+function shadowedAliasProperty({makeKey}) {
+    // ok: qrypt.javascript.rsa-keygen
+    makeKey("rsa", {});
+}
