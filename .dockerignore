@@ -1,0 +1,11 @@
+*
+!Dockerfile
+!pyproject.toml
+!README.md
+!MANIFEST.in
+!requirements-container.txt
+!src/
+!src/qrypt/
+!src/qrypt/**
+src/*.egg-info/
+src/**/__pycache__/
