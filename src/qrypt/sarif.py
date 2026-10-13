@@ -42,10 +42,8 @@ def sarif_report(report: dict) -> dict:
                                 "uri": quote(finding["path"], safe="/"),
                                 "uriBaseId": "%SRCROOT%",
                             },
-                            "region": {
-                                "startLine": finding["line"],
-                                "startColumn": finding["column"],
-                            },
+                            # Semgrep byte columns misplace Unicode highlights.
+                            "region": {"startLine": finding["line"]},
                         }
                     }
                 ],
@@ -81,8 +79,15 @@ def sarif_report(report: dict) -> dict:
                         "rules": rules,
                     }
                 },
-                # A portable base avoids disclosing the host's absolute checkout path.
-                "originalUriBaseIds": {"%SRCROOT%": {"uri": "file:///"}},
+                "columnKind": "unicodeCodePoints",
+                "originalUriBaseIds": {
+                    "%SRCROOT%": {
+                        "description": {
+                            "text": "The scan target directory; "
+                            "map to the local source root."
+                        }
+                    }
+                },
                 "invocations": [invocation],
                 "results": results,
                 "properties": {

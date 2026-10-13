@@ -191,9 +191,12 @@
           ]
         }
       },
+      "columnKind": "unicodeCodePoints",
       "originalUriBaseIds": {
         "%SRCROOT%": {
-          "uri": "file:///"
+          "description": {
+            "text": "The scan target directory; map to the local source root."
+          }
         }
       },
       "invocations": [
@@ -217,8 +220,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 4,
-                  "startColumn": 16
+                  "startLine": 4
                 }
               }
             }
@@ -244,8 +246,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 5,
-                  "startColumn": 15
+                  "startLine": 5
                 }
               }
             }
@@ -271,8 +272,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 6,
-                  "startColumn": 15
+                  "startLine": 6
                 }
               }
             }
@@ -298,8 +298,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 7,
-                  "startColumn": 14
+                  "startLine": 7
                 }
               }
             }
@@ -325,8 +324,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 8,
-                  "startColumn": 12
+                  "startLine": 8
                 }
               }
             }
@@ -352,8 +350,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 6,
-                  "startColumn": 11
+                  "startLine": 6
                 }
               }
             }
@@ -379,8 +376,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 7,
-                  "startColumn": 17
+                  "startLine": 7
                 }
               }
             }
@@ -406,8 +402,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 8,
-                  "startColumn": 10
+                  "startLine": 8
                 }
               }
             }
@@ -433,8 +428,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 9,
-                  "startColumn": 22
+                  "startLine": 9
                 }
               }
             }
@@ -460,8 +454,7 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "startLine": 10,
-                  "startColumn": 23
+                  "startLine": 10
                 }
               }
             }
@@ -476,7 +469,7 @@
       "properties": {
         "status": "completed",
         "scanned_files": 7,
-        "skipped_files": 22,
+        "skipped_files": 23,
         "coverage": "Explicit supported Python and Node.js API calls only; zero findings does not establish PQC readiness."
       }
     }

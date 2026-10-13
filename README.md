@@ -84,7 +84,9 @@ Scans support `.py`, `.js`, `.mjs`, and `.cjs`, honor Git/Semgrep ignore rules, 
 
 ## SARIF and GitHub Actions
 
-SARIF results use warning level, stable rule IDs, migration-review guidance, URI-escaped relative paths, and API-evidence confidence. They carry no source snippets or numeric vulnerability scores. Incomplete scans retain partial findings and set `invocations[].executionSuccessful` to `false`; exit code `2` still takes precedence.
+SARIF results use warning level, stable rule IDs, migration-review guidance, URI-escaped relative paths, line locations, and API-evidence confidence. They carry no source snippets or numeric vulnerability scores. Incomplete scans retain partial findings and set `invocations[].executionSuccessful` to `false`; exit code `2` still takes precedence.
+
+SARIF uses line-only regions because Semgrep column offsets count bytes; exporting them as Unicode columns would misplace highlights. The source base has a description without an absolute URI to preserve privacy; map `%SRCROOT%` to your local scan directory in viewers that require it.
 
 Paths are relative to the **scan target directory** (or the parent of a single-file target). For GitHub uploads, scan `.` from the repository root so locations identify committed files. Keep the same scan root between runs. The official `upload-sarif` action generates missing fingerprints from checked-out source; direct API uploads do not offer this deduplication assistance.
 

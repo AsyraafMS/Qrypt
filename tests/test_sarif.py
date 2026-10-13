@@ -62,7 +62,11 @@ def test_sarif_rule_links_and_escaped_source_location():
     assert rule["help"]["text"]
     location = result["locations"][0]["physicalLocation"]
     assert location["artifactLocation"]["uri"] == "src/cl%C3%A9%20%231.py"
-    assert location["region"] == {"startLine": 7, "startColumn": 3}
+    assert location["region"] == {"startLine": 7}
+    assert run["columnKind"] == "unicodeCodePoints"
+    base = run["originalUriBaseIds"]["%SRCROOT%"]
+    assert "uri" not in base
+    assert "scan target" in base["description"]["text"]
     assert result["level"] == "warning"
     assert "requiring verification" in result["message"]["text"]
     assert "security-severity" not in rule["properties"]
@@ -121,3 +125,28 @@ def test_sarif_rejects_unsafe_output_before_scanning(
     )
     assert source.read_text() == "preserve = True\n"
     assert capsys.readouterr().err
+
+
+def test_real_unicode_source_uses_accurate_line_locations(tmp_path, capsys):
+    source = tmp_path / "unicode.py"
+    source.write_text(
+        "from cryptography.hazmat.primitives.asymmetric import rsa\n"
+        "text = 'é😀'; key = rsa.generate_private_key("
+        "public_exponent=65537, key_size=2048)\n",
+        encoding="utf-8",
+    )
+    assert main(["scan", str(source), "--format", "sarif"]) == 0
+    output = capsys.readouterr()
+    run = json.loads(output.out)["runs"][0]
+    assert len(run["results"]) == 1
+    location = run["results"][0]["locations"][0]["physicalLocation"]
+    assert location["region"] == {"startLine": 2}
+    assert run["columnKind"] == "unicodeCodePoints"
+    assert "uri" not in run["originalUriBaseIds"]["%SRCROOT%"]
+    assert str(tmp_path) not in output.out
+
+
+def test_private_source_base_does_not_invent_filesystem_location():
+    base = sarif_report(REPORT)["runs"][0]["originalUriBaseIds"]["%SRCROOT%"]
+    assert "uri" not in base
+    assert "scan target" in base["description"]["text"]
