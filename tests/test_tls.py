@@ -180,3 +180,97 @@ def test_config_read_failures_preserve_privacy(
     findings, errors = scan_config(tmp_path / "openssl.cnf", "openssl.cnf")
     assert findings == []
     assert errors == [{"type": expected, "path": "openssl.cnf"}]
+
+
+def test_openssl_dotted_command_prefixes_are_detected(tmp_path):
+    path = tmp_path / "openssl.cnf"
+    path.write_text("[tls]\n1.Groups = X25519\n2.SignatureAlgorithms = RSA+SHA256\n")
+    findings, errors = scan_config(path, path.name)
+    assert errors == []
+    assert {f["algorithm"] for f in findings} == {"ECDH", "RSA"}
+
+
+@pytest.mark.parametrize(
+    "name,content,algorithms",
+    [
+        ("nginx.conf", "ssl_ecdh_curve X25519:$PRIVATE;\n", {"ECDH"}),
+        ("nginx.conf", "ssl_ecdh_curve X25519:${PRIVATE};\n", {"ECDH"}),
+        ("openssl.cnf", "[tls]\nGroups = X25519:$ENV::PRIVATE:P-256\n", {"ECDH", "EC"}),
+        ("openssl.cnf", "[tls]\nGroups = $ENV::X25519\n", set()),
+    ],
+)
+def test_mixed_dynamic_values_retain_only_literal_evidence(
+    tmp_path, name, content, algorithms
+):
+    path = tmp_path / name
+    path.write_text(content)
+    findings, errors = scan_config(path, name)
+    assert {f["algorithm"] for f in findings} == algorithms
+    assert any(e["type"] == "TLSUnresolvedSetting" for e in errors)
+    assert "PRIVATE" not in json.dumps(findings + errors)
+
+
+def test_nginx_map_entries_are_not_tls_directives(tmp_path):
+    path = tmp_path / "nginx.conf"
+    path.write_text(
+        "map $arg_method $label {\n ssl_ecdh_curve X25519;\n}\n"
+        "server {\n ssl_ecdh_curve X448;\n}\n"
+    )
+    findings, errors = scan_config(path, path.name)
+    assert errors == []
+    assert len(findings) == 1
+    assert findings[0]["line"] == 5
+
+
+def test_rsa_key_exchange_selector_is_removed_by_rsa_auth_exclusion(tmp_path):
+    path = tmp_path / "nginx.conf"
+    path.write_text("ssl_ciphers kRSA:!aRSA;\n")
+    assert scan_config(path, path.name) == ([], [])
+
+
+def test_bare_ssl_conf_command_is_a_syntax_error(tmp_path):
+    path = tmp_path / "nginx.conf"
+    path.write_text("ssl_conf_command;\n")
+    findings, errors = scan_config(path, path.name)
+    assert not findings
+    assert any(e["type"] == "TLSConfigSyntaxError" for e in errors)
+
+
+@pytest.mark.parametrize(
+    "content,error",
+    [
+        ("ssl_conf_command $PRIVATE X25519;\n", "TLSUnresolvedSetting"),
+        ("ssl_dhparam one.pem two.pem;\n", "TLSConfigSyntaxError"),
+        ("ssl_conf_command Groups X25519 extra;\n", "TLSConfigSyntaxError"),
+    ],
+)
+def test_nginx_command_names_and_arity_are_validated(tmp_path, content, error):
+    path = tmp_path / "nginx.conf"
+    path.write_text(content)
+    findings, errors = scan_config(path, path.name)
+    assert findings == []
+    assert any(e["type"] == error for e in errors)
+    assert "PRIVATE" not in json.dumps(errors)
+
+
+def test_invented_cipher_name_is_unresolved(tmp_path):
+    path = tmp_path / "openssl.cnf"
+    path.write_text("[tls]\nCipherString = ECDHE-RSA-AESFAKE\n")
+    findings, errors = scan_config(path, path.name)
+    assert findings == []
+    assert any(e["type"] == "TLSUnresolvedSetting" for e in errors)
+
+
+@pytest.mark.parametrize("value", ['"X"25519', "X25519"])
+def test_openssl_adjacency_and_escaped_backslashes_preserve_declarations(
+    tmp_path, value
+):
+    path = tmp_path / "openssl.cnf"
+    # Two trailing backslashes represent a literal backslash, not continuation.
+    path.write_text(
+        "[tls]\nOther = directory" + "\\" * 2 + "\nGroups = " + value + "\n"
+    )
+    findings, errors = scan_config(path, path.name)
+    assert errors == []
+    assert [f["algorithm"] for f in findings] == ["ECDH"]
+    assert findings[0]["line"] == 3

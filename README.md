@@ -146,7 +146,7 @@ qrypt scan examples/nginx.conf
 qrypt scan examples/openssl.cnf --format sarif --output tls.sarif
 ```
 
-`.cnf`, filenames starting with `openssl`, and `*.openssl.conf` use OpenSSL assignment syntax. Other `.conf` files use Nginx directive syntax. Ignore unrelated configuration formats using `.semgrepignore`. Both parsers support comments, quoted values, and multiline declarations (backslash continuation for OpenSSL).
+`.cnf`, filenames starting with `openssl`, and `*.openssl.conf` use OpenSSL assignment syntax. Other `.conf` files use Nginx directive syntax. Ignore unrelated configuration formats using `.semgrepignore`. Both parsers support comments, quoted values, and multiline declarations (unescaped backslash continuation for OpenSSL). OpenSSL dotted command prefixes such as `1.Groups` are recognized. Nginx data blocks such as `map` and `types` are excluded from directive interpretation.
 
 | Nginx declaration | OpenSSL command | Evidence |
 | --- | --- | --- |
@@ -158,7 +158,7 @@ qrypt scan examples/openssl.cnf --format sarif --output tls.sarif
 
 Four TLS report rules supplement the ten source rules. Findings describe **literal configured intent**, including declarations in inactive OpenSSL sections; they do not determine activation, inheritance, overrides, provider support, certificates or negotiated sessions. Group declarations use EC when key agreement versus signing cannot be inferred.
 
-Cipher `!` exclusions are permanent within a declaration; `-` removes earlier entries but permits re-addition; leading `+` only reorders existing entries. Authentication and key-exchange selectors remain distinct (`aRSA` versus `kRSA`). This is a bounded selector interpreter, not OpenSSL's full cipher expansion: unknown selectors, intersections, defaults such as `HIGH`/`DEFAULT`/`auto`, variables and unsupported algorithm names yield `TLSUnresolvedSetting` and exit `2`. Partial literal findings are retained.
+Cipher `!` exclusions are permanent within a declaration; `-` removes earlier entries but permits re-addition; leading `+` only reorders existing entries. Authentication and key-exchange selectors remain distinct (`aRSA` versus `kRSA`). This is a bounded selector interpreter, not OpenSSL's full cipher expansion: unknown selectors, intersections, defaults such as `HIGH`/`DEFAULT`/`auto`, variables and unsupported algorithm names yield `TLSUnresolvedSetting` and exit `2`. Independently recognizable literal entries are retained even when other values are dynamic. Supported named cipher suites are bounded to ECDHE-RSA/ECDHE-ECDSA/DHE-RSA with listed AES CBC/GCM or ChaCha20-Poly1305 variants; the exact allowlist is in `src/qrypt/tls.py`. Unknown names remain unresolved.
 
 Includes are never followed and produce `TLSUnresolvedInclude`, even when they may be unrelated to TLS. Invalid supported syntax, unreadable files and encoding failures also make the scan incomplete. Diagnostics omit configuration values and referenced paths. Missing settings, certificates and inherited defaults remain outside coverage; zero findings is not a deployment assessment. Use native configuration validators separately before deployment.
 

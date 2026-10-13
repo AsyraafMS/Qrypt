@@ -68,7 +68,7 @@ SELECTORS = {
 }
 TOKENS = re.compile(
     r"""(?P<comment>\#[^\n]*)|(?P<quoted>"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')"""
-    r"""|(?P<punct>[;{}])|(?P<word>[^\s;{}#'"]+)"""
+    r"""|(?P<punct>[;{}])|(?P<word>(?:\$\{[^}]*\}|[^\s;{}#'"])+)"""
 )
 
 
@@ -92,12 +92,18 @@ def _tokens(text):
 
 
 def _nginx(text):
-    pending, depth = [], 0
+    pending, contexts = [], []
     for value, line, column, kind in _tokens(text):
         if kind != "punct":
             pending.append((value, line, column))
         elif value == ";":
-            if pending:
+            if pending and (
+                pending[0][0] == "include"
+                or not any(
+                    c in {"map", "geo", "types", "split_clients", "charset_map"}
+                    for c in contexts
+                )
+            ):
                 yield (
                     pending[0][0],
                     [v[0] for v in pending[1:]],
@@ -112,13 +118,13 @@ def _nginx(text):
                 or pending[0][0] == "ssl_conf_command"
             ):
                 raise ValueError("Invalid directive block")
-            depth += 1
+            contexts.append(pending[0][0])
             pending = []
         else:
-            if pending or not depth:
+            if pending or not contexts:
                 raise ValueError("Unbalanced configuration block")
-            depth -= 1
-    if pending or depth:
+            contexts.pop()
+    if pending or contexts:
         raise ValueError("Unterminated configuration")
 
 
@@ -127,40 +133,57 @@ def _openssl(text):
     for number, raw in enumerate(text.splitlines(), 1):
         if not logical:
             start = number
-        if raw.endswith("\\"):
+        backslashes = len(raw) - len(raw.rstrip("\\"))
+        if backslashes % 2:
             logical += raw[:-1]
             continue
         logical += raw
-        tokens = list(_tokens(logical))
+        column = len(logical) - len(logical.lstrip()) + 1
+        words = " ".join(shlex.split(logical, comments=True))
         logical = ""
-        if not tokens:
+        if not words:
             continue
-        words = " ".join(token[0] for token in tokens)
         if words.startswith("[") and words.endswith("]"):
             continue
         if words.startswith(".include"):
-            yield "include", [], start, 1
+            yield "include", [], start, column
             continue
         if words.startswith(".pragma"):
-            yield "unresolved", [], start, 1
+            yield "unresolved", [], start, column
             continue
         if "=" not in words:
             raise ValueError("Expected configuration assignment")
         name, value = words.split("=", 1)
-        yield name.strip().rsplit("::", 1)[-1], [value.strip()], start, 1
+        name = name.strip().rsplit("::", 1)[-1]
+        if "." in name:
+            name = name.partition(".")[2]
+        yield name, [value.strip()], start, column
     if logical:
         raise ValueError("Unterminated continuation")
 
 
 def _cipher(token):
     if token in SELECTORS:
-        return SELECTORS[token]
-    match = re.fullmatch(
-        r"(ECDHE|DHE|EDH)-(RSA|ECDSA)-(?:AES|ARIA|CAMELLIA|CHACHA20)[A-Za-z0-9-]+",
-        token,
-    )
-    if match:
-        return {("ECDH" if match[1] == "ECDHE" else "DH", KEY), (match[2], AUTH)}
+        # RSA key-exchange suites also require RSA authentication.
+        return SELECTORS["RSA"] if token == "kRSA" else SELECTORS[token]
+    # shortcut: bounded modern suite names; extend this allowlist for new coverage.
+    suffixes = {
+        "AES128-GCM-SHA256",
+        "AES256-GCM-SHA384",
+        "AES128-SHA",
+        "AES256-SHA",
+        "AES128-SHA256",
+        "CHACHA20-POLY1305",
+    }
+    for prefix, key in [
+        ("ECDHE-RSA-", "ECDH"),
+        ("ECDHE-ECDSA-", "ECDH"),
+        ("DHE-RSA-", "DH"),
+    ]:
+        allowed = suffixes | {"AES256-SHA384" if key == "ECDH" else "AES256-SHA256"}
+        if token.startswith(prefix) and token[len(prefix) :] in allowed:
+            auth = "ECDSA" if "ECDSA" in prefix else "RSA"
+            return {(key, KEY), (auth, AUTH)}
     return None
 
 
@@ -177,12 +200,14 @@ def _cipher_list(tokens):
             continue
 
         def matches(entry):
-            return entry == name or (name in SELECTORS and evidence <= _cipher(entry))
+            return entry == name or (
+                name in SELECTORS and SELECTORS[name] <= _cipher(entry)
+            )
 
         if prefix in ("!", "-"):
             selected = {n: e for n, e in selected.items() if not matches(n)}
             if prefix == "!":
-                banned.append((name, evidence))
+                banned.append((name, SELECTORS.get(name, evidence)))
         elif prefix != "+":
             if not any(
                 name == n or (n in SELECTORS and e <= evidence) for n, e in banned
@@ -192,17 +217,22 @@ def _cipher_list(tokens):
 
 
 def _evidence(kind, value):
+    # Keep variable references atomic so names such as $ENV::X25519 are not evidence.
+    value = re.sub(r"\$(?:\{[^}]*\}|[\w.]+(?:::[\w.]+)?)", "$unresolved", value)
     tokens = [token for token in re.split(r"[:,\s]+", value) if token]
-    if not tokens or "$" in value or "\\" in value:
+    if not tokens:
         return set(), True
     if kind == "dhparam":
-        return {("DH", "configured-parameter-reference")}, False
+        return {("DH", "configured-parameter-reference")}, "$" in value or "\\" in value
     if kind == "ciphers":
         return _cipher_list(tokens)
     if kind == "suites":
         return set(), any(token not in TLS13_SUITES for token in tokens)
     evidence, unresolved = set(), False
     for token in tokens:
+        if "$" in token or "\\" in token:
+            unresolved = True
+            continue
         if kind == "groups":
             algorithm = GROUPS.get(token)
             operation = "configured-group"
@@ -258,10 +288,25 @@ def scan_config(path: Path, relative: str) -> tuple[list[dict], list[dict]]:
             if openssl:
                 kind = COMMANDS.get(name.lower())
             elif name == "ssl_conf_command":
-                kind = COMMANDS.get(arguments[0].lower()) if arguments else None
+                if len(arguments) != 2:
+                    errors.append(
+                        {"type": "TLSConfigSyntaxError", "path": relative, "line": line}
+                    )
+                    continue
+                if "$" in arguments[0]:
+                    errors.append(
+                        {"type": "TLSUnresolvedSetting", "path": relative, "line": line}
+                    )
+                    continue
+                kind = COMMANDS.get(arguments[0].lower())
                 arguments = arguments[1:]
             else:
                 kind = NGINX.get(name)
+                if kind and len(arguments) != 1:
+                    errors.append(
+                        {"type": "TLSConfigSyntaxError", "path": relative, "line": line}
+                    )
+                    continue
             if kind is None:
                 continue
             evidence, unresolved = _evidence(kind, " ".join(arguments))
