@@ -10,7 +10,7 @@ from pathlib import Path
 from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import VerticalScroll
+from textual.containers import Center, VerticalScroll
 from textual.widgets import DataTable, Input, Static
 
 from qrypt.banner import BANNER
@@ -46,7 +46,7 @@ class QryptApp(App[int]):
     BINDINGS = [Binding("ctrl+c", "quit", "Quit", priority=True)]
     CSS = """
     Screen { background: #0d1117; color: #e6edf3; padding: 0 1; }
-    #banner { height: auto; color: #67e8f9; }
+    #banner { width: auto; height: auto; color: #67e8f9; }
     #workspace, #status, #coverage, #message { height: auto; }
     #workspace, #coverage { color: #9ca3af; }
     #status { color: #67e8f9; margin-top: 1; }
@@ -72,7 +72,8 @@ class QryptApp(App[int]):
         self._quitting = False
 
     def compose(self) -> ComposeResult:
-        yield Static(BANNER, id="banner", markup=False)
+        with Center():
+            yield Static(BANNER, id="banner", markup=False)
         yield Static(_literal(f"Project: {self.directory}"), id="workspace")
         yield Static("Ready — enter /scan to scan the current project", id="status")
         yield Static(
