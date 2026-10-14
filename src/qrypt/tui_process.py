@@ -93,6 +93,7 @@ async def run_scan(target: Path) -> dict:
     spawning = asyncio.create_task(
         asyncio.create_subprocess_exec(
             sys.executable,
+            "-I",
             "-m",
             "qrypt",
             "scan",

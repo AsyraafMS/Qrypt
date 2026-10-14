@@ -177,3 +177,23 @@ def test_validation_also_runs_with_python_optimization():
     )
     assert result.returncode != 0
     assert b"Invalid scan report" in result.stderr
+
+
+def test_project_cannot_shadow_scanner_module(tmp_path, monkeypatch):
+    process = importlib.import_module("qrypt.tui_process")
+    marker = tmp_path / "executed"
+    (tmp_path / "qrypt.py").write_text(
+        "from pathlib import Path\n"
+        f"Path({str(marker)!r}).write_text('project code executed')\n"
+    )
+    (tmp_path / "app.js").write_text(
+        'const crypto = require("node:crypto"); '
+        'crypto.generateKeyPairSync("ml-kem-768", {});\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    try:
+        report = asyncio.run(process.run_scan(tmp_path))
+    finally:
+        assert not marker.exists(), "Scanning must not execute project-local qrypt.py"
+    assert report["status"] == "completed"
+    assert report["inventory"][0]["algorithm"] == "ML-KEM-768"
