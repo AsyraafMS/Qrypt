@@ -46,7 +46,7 @@ class QryptApp(App[int]):
     BINDINGS = [Binding("ctrl+c", "quit", "Quit", priority=True)]
     CSS = """
     Screen { background: #0d1117; color: #e6edf3; padding: 0 1; }
-    #banner { width: auto; height: auto; color: #67e8f9; }
+    #banner { width: auto; height: auto; padding: 2 0; color: #67e8f9; }
     #workspace, #status, #coverage, #message { height: auto; }
     #workspace, #coverage { color: #9ca3af; }
     #status { color: #67e8f9; margin-top: 1; }

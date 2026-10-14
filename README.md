@@ -8,13 +8,9 @@ The project demonstrates cryptographic inventory, AppSec analysis, security auto
 
 Run **`qrypt`** to open the interactive command prompt and results panel. Use `/scan .` to scan the current project, select a finding for guidance, and `/export` to save a report.
 
-![QRYPT interactive command prompt with centered banner, scan results and finding details](docs/assets/qrypt-tui.png)
+![QRYPT interactive command prompt with padded, centered banner, scan results and finding details](docs/assets/qrypt-tui.png)
 
-Captured from a real terminal running the installed TUI, with the centered QRYPT banner, `/scan examples` and a selected finding. Interactive mode currently supports Linux/POSIX terminals; Windows cleanup is not verified.
-
-![QRYPT terminal showing the banner and six PQC inventory observations](docs/assets/qrypt-terminal.png)
-
-Captured from a real terminal running `qrypt scan examples/pqc_usage.js`: six inventory observations and zero migration warnings. Scanning does not execute the example.
+Captured from a real terminal running the installed TUI, with space above and below the centered QRYPT banner, `/scan examples` and a selected finding. Scanning does not execute the examples. Interactive mode currently supports Linux/POSIX terminals; Windows cleanup is not verified.
 
 ## Purpose
 
