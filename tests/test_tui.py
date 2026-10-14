@@ -290,3 +290,46 @@ def test_empty_report_replaces_old_rows(monkeypatch):
             assert "empty" in _text(app, "#status")
 
     asyncio.run(exercise())
+
+
+@pytest.mark.parametrize("empty", [True, False])
+def test_queued_row_selection_does_not_use_replacement_report(monkeypatch, empty):
+    tui = importlib.import_module("qrypt.tui")
+
+    async def exercise():
+        gate = asyncio.Event()
+
+        async def scan(target):
+            if target.name == "first":
+                return copy.deepcopy(REPORT)
+            await gate.wait()
+            replacement = copy.deepcopy(REPORT)
+            if empty:
+                replacement.update(findings=[], inventory=[])
+            else:
+                replacement["inventory"][0]["path"] = "replacement.js"
+            return replacement
+
+        monkeypatch.setattr(tui, "run_scan", scan)
+        app = tui.QryptApp()
+        async with app.run_test() as pilot:
+            await app.submit_command("/scan first")
+            await app.scan_task
+            await pilot.pause()
+            table = app.query_one("#results", DataTable)
+            await app.submit_command("/scan empty")
+            gate.set()
+            table.action_select_cursor()
+            await app.scan_task
+            await pilot.pause()
+            assert app.is_running
+            assert table.row_count == (0 if empty else 1)
+            if empty:
+                assert "No observations" in _text(app, "#details")
+            else:
+                assert "Select a finding" in _text(app, "#details")
+                table.action_select_cursor()
+                await pilot.pause()
+                assert "replacement.js" in _text(app, "#details")
+
+    asyncio.run(exercise())

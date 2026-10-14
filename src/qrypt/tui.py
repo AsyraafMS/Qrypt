@@ -63,6 +63,7 @@ class QryptApp(App[int]):
         self.directory = Path.cwd()
         self.report = None
         self.report_target = None
+        self._row_entries = {}
         self.scan_task = None
         self.busy = False
         self.history = []
@@ -224,9 +225,10 @@ class QryptApp(App[int]):
         self._show_status()
         self._update("#coverage", self.report["coverage"])
         table = self.query_one("#results", DataTable)
+        self._row_entries.clear()
         table.clear()
-        for index, entry in enumerate(self.report["inventory"]):
-            table.add_row(
+        for entry in self.report["inventory"]:
+            key = table.add_row(
                 _literal(
                     "Candidate" if entry["migration_candidate"] else "PQC inventory"
                 ),
@@ -234,8 +236,8 @@ class QryptApp(App[int]):
                 _literal(entry["operation"]),
                 _literal(entry["path"]),
                 str(entry["line"]),
-                key=str(index),
             )
+            self._row_entries[key] = entry
         hint = (
             "Select a finding to inspect its evidence and guidance."
             if table.row_count
@@ -252,7 +254,9 @@ class QryptApp(App[int]):
         )
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
-        entry = self.report["inventory"][int(event.row_key.value)]
+        entry = self._row_entries.get(event.row_key)
+        if entry is None:
+            return
         classification = (
             "Migration candidate requiring verification"
             if entry["migration_candidate"]
