@@ -78,6 +78,19 @@ def _write_report(path: Path, content: str) -> None:
             temporary.unlink(missing_ok=True)
 
 
+def render_report(report: dict, output_format: str) -> str:
+    if output_format == "text":
+        return _text_report(report)
+    payload = report
+    if output_format == "cbom":
+        payload = cbom_report(report)
+    elif output_format == "sarif":
+        payload = sarif_report(report)
+    elif output_format != "json":
+        raise ValueError("Unknown report format.")
+    return json.dumps(payload, indent=2) + "\n"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Review PQC migration candidates locally."
@@ -99,14 +112,7 @@ def main(argv: list[str] | None = None) -> int:
         if arguments.output:
             _validate_output(arguments.output, arguments.format)
         report = scan(arguments.path)
-        if arguments.format == "cbom":
-            content = json.dumps(cbom_report(report), indent=2) + "\n"
-        elif arguments.format == "sarif":
-            content = json.dumps(sarif_report(report), indent=2) + "\n"
-        elif arguments.format == "json":
-            content = json.dumps(report, indent=2) + "\n"
-        else:
-            content = _text_report(report)
+        content = render_report(report, arguments.format)
         if (
             arguments.format == "text"
             and not arguments.output
