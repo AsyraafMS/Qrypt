@@ -11,7 +11,7 @@ This is a new interface subsystem, implemented with Textual. The first release t
 - No arguments and interactive stdin/stdout: launch the TUI. No arguments with redirected input/output: print usage and return `2`, without terminal control sequences.
 - `qrypt scan ...` continues through argparse with the existing output and exit semantics. `qrypt --help` continues to print CLI help.
 - Show the supplied QRYPT banner, startup working directory, scan status and coverage caveat above a results table. On narrow terminals, use a compact QRYPT heading instead of clipping the banner.
-- Keep a command input and short command help at the bottom. Tab moves between prompt, table and details. Arrow keys navigate results; selecting a row shows its full location, rule, confidence and guidance.
+- Keep a command input and short command help at the bottom. Tab moves between prompt, table and details. Arrow keys navigate results; selecting a row shows its full location, rule, confidence and guidance. Rows have unique identities; queued selections from replaced reports are ignored.
 - Table columns: classification, algorithm, operation, file and line. Include classical migration candidates and PQC inventory observations; distinguish their classification explicitly. Show diagnostics in the details/status area, including incomplete scans and empty results.
 - Provide in-memory prompt history through Up/Down. Never save command history or reports automatically.
 
@@ -30,7 +30,7 @@ One scan runs at a time. While scanning, retain previous results with their targ
 
 ## Execution and Error Handling
 
-Use an asynchronous subprocess invoking `sys.executable -m qrypt scan <target> --format json`. This reuses scanner normalization and exit semantics without blocking the UI or duplicating detection logic. A new POSIX process session allows quitting to stop the scanner and Semgrep process group. Terminate, wait for a bounded grace period, then kill/reap the group if needed; perform cleanup even after the wrapper exits with surviving descendants. Cancellation discards the partial command output and never overwrites prior results.
+Use an asynchronous subprocess invoking `sys.executable -I -m qrypt scan <target> --format json`. Isolated Python imports prevent project files from shadowing the installed scanner. This reuses scanner normalization and exit semantics without blocking the UI or duplicating detection logic. A new POSIX process session allows quitting to stop the scanner and Semgrep process group. Terminate, wait for a bounded grace period, then kill/reap the group if needed; perform cleanup even after the wrapper exits with surviving descendants. Cancellation discards the partial command output and never overwrites prior results.
 
 Exit `0` is advisory success; exit `2` can still contain an incomplete JSON report with partial evidence. Check the return code and validate the expected report shape before populating widgets. Missing engines, malformed output, unsupported targets, subprocess failures and scan timeouts produce readable errors, not a crashed TUI. Keep the existing 120-second engine timeout; avoid claiming measured percentages because the scanner supplies none.
 
@@ -53,4 +53,4 @@ Use focused pytest tests and Textual's headless testing for no-argument dispatch
 
 ## Review Status
 
-Self-reviewed for command syntax, entry-point compatibility, subprocess lifecycle, stale-result labeling and output safety. User approved implementation on 2026-10-14. The [implementation plan](../plans/2026-10-14-interactive-terminal.md) is ready for review before execution.
+Self-reviewed for command syntax, entry-point compatibility, subprocess lifecycle, stale-result labeling and output safety. User approved implementation on 2026-10-14. The [implementation plan](../plans/2026-10-14-interactive-terminal.md) was approved and executed, including one independent review and verified fixes for isolated imports and stale row selections.
