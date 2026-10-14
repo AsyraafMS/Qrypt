@@ -6,6 +6,12 @@ The project demonstrates cryptographic inventory, AppSec analysis, security auto
 
 > **Status: Phase 4 implemented locally.** Source scanning, terminal/JSON/SARIF/CBOM reports, GitHub Actions, and Docker are available, with local TLS analysis and cryptographic inventory for the v0.3 milestone. GitHub workflow execution and the public Code Scanning demo remain pending; the current repository is private. The offline dashboard is planned. This is an early development version, not a comprehensive cryptographic audit.
 
+Run **`qrypt`** to open the interactive command prompt and results panel. Use `/scan .` to scan the current project, select a finding for guidance, and `/export` to save a report.
+
+![QRYPT interactive command prompt with scan results and finding details](docs/assets/qrypt-tui.png)
+
+Captured from a real terminal running the installed TUI, with `/scan examples` and a selected finding. Interactive mode currently supports Linux/POSIX terminals; Windows cleanup is not verified.
+
 ![QRYPT terminal showing the banner and six PQC inventory observations](docs/assets/qrypt-terminal.png)
 
 Captured from a real terminal running `qrypt scan examples/pqc_usage.js`: six inventory observations and zero migration warnings. Scanning does not execute the example.
@@ -28,6 +34,7 @@ Available now:
 - GitHub Actions for tests, packaging, container smoke checks, and SARIF artifacts; completed scans upload on public repositories.
 - Literal Nginx/OpenSSL TLS group, signature and cipher configuration analysis, with unresolved-input diagnostics.
 - An interactive terminal banner that leaves machine-readable output untouched.
+- A command prompt with a results table, finding details, in-memory history and safe report exports.
 - CycloneDX 1.6 CBOM export with observed algorithms, occurrence evidence and private scan diagnostics.
 - Supported Node.js ML-KEM/ML-DSA key-generation inventory, classified separately from migration warnings.
 - A non-root Docker image with a pinned base digest and dependency versions.
@@ -45,6 +52,7 @@ flowchart TD
     D --> E[Terminal and JSON reports]
     D --> F[SARIF: GitHub Code Scanning]
     D --> G[CycloneDX 1.6 CBOM]
+    D --> I[Interactive terminal: prompt and results panel]
     D --> H[Offline HTML dashboard: later phase]
 ```
 
@@ -60,10 +68,34 @@ Requires Python 3.12+ with working `venv` and pip support, and a platform suppor
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
-qrypt scan examples
+qrypt
 ```
 
 The example directory produces 25 migration candidates and 31 inventory observations across five files. Scanning does not import or execute them, so their application dependencies are not required. `python -m qrypt` is also supported.
+
+### Interactive Commands
+
+With the installed command on PATH (or the virtual environment activated), run `qrypt` without arguments in a terminal. Enter commands at the prompt:
+
+```text
+/scan
+/scan examples
+/scan "path/to/project with spaces"
+/export json report.json
+/export sarif qrypt.sarif
+/export cbom inventory.cdx.json
+/export text report.txt
+/help
+/quit
+```
+
+Paths use the startup directory. Tab moves between the prompt, results and details; arrow keys navigate rows or prompt history, and Enter on a row shows its evidence and guidance. Small terminals use a compact heading. The interface displays both migration candidates and separately classified PQC inventory observations.
+
+Only one scan runs at a time. Failed scans retain the previous report with its original target; incomplete scans show partial evidence and diagnostics. Exports use the latest report, require an existing parent directory and may **replace an existing valid report file** atomically. No reports or command history are saved automatically. `/quit` or Ctrl+C stops owned scan processes before restoring the terminal.
+
+No-argument invocation with redirected input/output prints usage and returns `2`. Use `qrypt scan ...` for scripts and CI; its report formats, exit codes and banner rules remain unchanged. Interactive mode uses the existing 120-second engine timeout with a 130-second limit around the child CLI.
+
+### Scripted Scans
 
 ```bash
 # Review supported source and configuration files in the current repository
@@ -118,6 +150,16 @@ docker run --rm --network none --read-only \
 ```
 
 The image uses Python 3.12 on Debian Bookworm, installs QRYPT outside the mounted checkout, and runs as UID/GID 65532. Mounted source must be readable by that user. Keep reports on the host through stdout; the checkout stays read-only. Installation needs network access, scanning does not.
+
+For the interactive prompt, allocate a terminal:
+
+```bash
+docker run --rm -it --network none --read-only \
+  --tmpfs /tmp:rw,noexec,nosuid,size=256m \
+  -v "$PWD:/workspace:ro" qrypt:0.3
+```
+
+Enter `/scan .`, then `/quit` to exit. The mount is read-only, so `/export` must target a writable location such as `/tmp/report.json`; that temporary report disappears with the container. Use scripted stdout redirection above to retain reports on the host, or explicitly mount a writable export directory accessible to UID 65532.
 
 The base digest and all runtime/build dependency versions are pinned in `Dockerfile` and `requirements-container.txt`. Builds use wheels and disable dependency resolution/build isolation for the local package. This fixes dependency selection, not byte-identical image timestamps. Linux amd64 is verified; other architectures are not yet verified. When refreshing dependencies, resolve them in the pinned Python 3.12 base, update the complete lock, and repeat tests plus container exit-code checks.
 
