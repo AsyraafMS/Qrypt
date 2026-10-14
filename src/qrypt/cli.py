@@ -92,6 +92,7 @@ def render_report(report: dict, output_format: str) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
     parser = argparse.ArgumentParser(
         description="Review PQC migration candidates locally."
     )
@@ -107,6 +108,14 @@ def main(argv: list[str] | None = None) -> int:
         "--output", type=Path, help="Write a .txt, .json, or .sarif report."
     )
     scan_parser.add_argument("--fail-on-findings", action="store_true")
+    if not argv:
+        if sys.stdin.isatty() and sys.stdout.isatty():
+            from qrypt.tui import launch
+
+            return launch()
+        parser.print_usage(sys.stderr)
+        print("Use an interactive terminal or qrypt scan <path>.", file=sys.stderr)
+        return 2
     arguments = parser.parse_args(argv)
     try:
         if arguments.output:
